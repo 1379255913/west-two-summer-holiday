@@ -4,24 +4,48 @@
 <!--        </page-header>-->
         <page-main style="height: 100%">
             <ul>
-                <li class="item-box" v-for="(item,index) in 7">
+                <el-skeleton style="width: 100%;" animated v-for="t in 5" :loading="loading">
+                    <template #template>
+                        <li class="item-box">
+                                <div class="inside-box">
+                                    <el-skeleton-item variant="image" class="image" />
+                                    <div class="text">
+                                        <el-skeleton-item variant="p" style="width: 500px" class="title"/>
+                                        <div style="padding: 20px 0 0 0"></div>
+                                        <el-skeleton-item variant="p" style="width: 800px;"/>
+                                        <div style="padding: 20px 0 0 0"></div>
+                                        <el-skeleton-item variant="p" style="width: 800px;"/>
+                                    </div>
+                                </div>
+                        </li>
+                    </template>
+                </el-skeleton>
+                <li class="item-box" v-for="(item,index) in articleArray" :key="item._id">
                     <div class="inside-box">
-                        <div class="image" @click="pushRouter('1')">
-                            <img src="https://img.bosszhipin.com/beijin/upload/admin/20220713/7a57a5a743894a0e55e3ee0e40b3a5c4c78475c35278a8d3a24837d9ceae65e3b6300d3c1a17cb94.png" style="width: 100%">
+                        <div class="image" @click="pushRouter(item._id)">
+                            <img :src="item.title_img||fakeImg()" alt="图片" style="width: 100%">
                         </div>
                         <div class="text">
-                            <p class="title" @click="pushRouter('1')">【海归必读】远程面试如何准备？</p>
-                            <p class="summary"> 受疫情影响，大多数企业都选择了远程面试，特别是针对部分回不了国的留学生，远程面试成为目前主流的面试形式之一。虽说对地点和时间的要求较为宽松，但另一方面，面对镜头，大多数人往往很难自如的表</p>
+                            <p class="title" @click="pushRouter(item._id)">{{ item.title }}</p>
+                            <p class="summary">{{ item.content }}</p>
                         </div>
                     </div>
                 </li>
+                <li class="page" v-show="!loading">
+                    <el-pagination background layout="prev, pager, next" :page-count="total_page" v-model:current-page="current_page"  :total="null"/>
+                </li>
             </ul>
+
         </page-main>
     </div>
 </template>
 
 <script setup>
 import { useRouter } from 'vue-router'
+import { onMounted,reactive,toRefs,ref,watch } from 'vue'
+import {getArticle} from "@/apiArray/article";
+import fakeImg from "@/util/fake.img";
+import getChinese from "@/util/getChinese"
 
 // 路由跳转
 const router = useRouter()
@@ -29,6 +53,61 @@ const pushRouter = (id)=>{
     router.push({ name: 'job_hunting_skill_detail', params: { id: id }})
 }
 
+//文章变量
+const state = reactive({
+    articleArray: [],
+    current_page: 1,
+    total_article: 0,
+    total_page: 0
+})
+
+//获取文章列表
+onMounted(()=>{
+    getArticle('职场思维',1).then(res=>{
+        state.articleArray = res.article
+        state.total_article = res.total_article
+        state.total_page = res.total_page
+        loading.value = false
+    })
+    watch(()=>state.current_page,(newValue,oldValue)=>{
+        if (newValue!==oldValue){
+            reloadArticle(newValue)
+        }
+
+    })
+})
+
+let { articleArray,current_page,total_article,total_page } = toRefs(state)
+
+//骨架屏
+const loading = ref(true)
+
+
+//重新获取文章
+const reloadArticle = (page)=>{
+    backTop()
+    loading.value=true
+    getArticle('职场思维',page).then(res=>{
+        state.articleArray = res.article
+        state.current_page = parseInt(res.current_page)
+        state.total_article = res.total_article
+        state.total_page = res.total_page
+        loading.value = false
+
+    })
+
+}
+
+//回到顶部
+const backTop = () => {
+    let top = document.documentElement.scrollTop//获取点击时页面的滚动条纵坐标位置
+    const timeTop = setInterval(() => {
+        document.documentElement.scrollTop = top -= 50//一次减50往上滑动
+        if (top <= 0) {
+            clearInterval(timeTop)
+        }
+    }, 5)//定时调用函数使其更顺滑
+}
 </script>
 
 <style scoped lang="scss">
@@ -65,12 +144,14 @@ p{
                 font-weight: 400;
             }
             .summary {
-                height: 75px;
                 line-height: 25px;
                 color: #666;
                 padding: 20px 0 0;
             }
         }
     }
+}
+.page{
+    padding: 35px 50px;
 }
 </style>

@@ -30,7 +30,6 @@ api.interceptors.request.use(
          * 全局拦截请求发送前提交的参数
          * 以下代码为示例，在请求头里带上 token 信息
          */
-        console.log(request.data);
         if (userStore.isLogin) {
             request.headers['Authorization'] = userStore.token
         }
@@ -62,13 +61,14 @@ api.interceptors.response.use(
 
             }
             // 请求成功并且没有报错
-            console.log(response);
             return Promise.resolve(response)
         } else {
             // 这里做错误提示
             ElMessage.error(response.data.message)
             return Promise.reject(response)
         }
+
+
     },
     error => {
         let message = error.message

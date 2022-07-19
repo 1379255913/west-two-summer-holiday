@@ -16,6 +16,7 @@
         "preinstall": "npx only-allow pnpm"
     },
     "dependencies": {
+        "@mojs/core": "^1.3.0",
         "@tinymce/tinymce-vue": "^5.0.0",
         "@vueuse/core": "^8.7.5",
         "@vueuse/integrations": "^8.7.5",
