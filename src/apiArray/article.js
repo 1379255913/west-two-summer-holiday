@@ -40,7 +40,7 @@ export function putLikeOrFavorite(oid,type,number){
         favorite+=number
     }
     return new Promise((resolve, reject) => {
-        api.put('lc', {
+        api.put('article/lc', {
             article_id: oid,
             like: like,
             collect: favorite
@@ -55,9 +55,36 @@ export function putLikeOrFavorite(oid,type,number){
 
 export function getLikeOrFavorite(oid){
     return new Promise((resolve, reject) => {
-        api.get('lc', {
-            article_id: oid,
+        api.get('article/lc', {
+            params: {
+                article_id: oid,
+            }
         }).then(res => {
+            console.log(res);
+            resolve(res.data.data)
+        }).catch(error => {
+            reject(error)
+        })
+    })
+}
+
+export function postComment(article_id,comment,oid){
+    let data = {}
+    if (oid){
+        data={
+            article_id: article_id,
+            subcomment: comment,
+            comment_id: oid,
+        }
+    } else {
+        data={
+            article_id: article_id,
+            comment: comment,
+        }
+    }
+    console.log(data);
+    return new Promise((resolve, reject) => {
+        api.post('article', data).then(res => {
             console.log(res);
             resolve(res.data.data)
         }).catch(error => {

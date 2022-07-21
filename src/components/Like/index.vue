@@ -38,13 +38,16 @@
 
 <script>
 import mojs from "@mojs/core";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed,watch } from "vue";
 export default {
     props: {
         isLiked: Boolean
     },
     setup(props) {
         const heart = ref(null);
+        watch(()=>props.isLiked,(newValue,oldValue)=>{
+            hearted.value = props.isLiked
+        })
         // 是否已点赞
         const hearted = ref(props.isLiked);
         const heartBounce = ref(1);

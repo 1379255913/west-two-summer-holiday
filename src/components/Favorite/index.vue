@@ -35,20 +35,22 @@
 
 <script>
 import mojs from "@mojs/core";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed,watch } from "vue";
 export default {
     props: {
         isLiked: Boolean
     },
     setup(props) {
         const heart = ref(null);
-
+        //数据绑定
+        watch(()=>props.isLiked,(newValue,oldValue)=>{
+            hearted.value = props.isLiked
+        })
         // 是否已点赞
         const hearted = ref(props.isLiked);
         const heartBounce = ref(1);
         const heartStyle = computed(() => {
             return {
-
                 fill: `${hearted.value ? '#ffb700' : ''}`,
                 stroke: `${hearted.value ? '#ffb700' : ''}`,
                 transform: `scale3d(${heartBounce.value},${heartBounce.value},1)`,
