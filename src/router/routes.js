@@ -108,6 +108,10 @@ import WordCloud from './modules/Bigdata/wordcloud'
 import DataAnalysis from './modules/Bigdata/data.analysis'
 import Resume from './modules/CareerPath/resume'
 import Skill from './modules/CareerPath/skill'
+import communicate from "@/router/modules/CareerPath/communicate";
+import tips from "@/router/modules/CareerPath/tips";
+import GeneralSkills from "@/router/modules/SkillLearning/GeneralSkills";
+import ToolRecommendation from "@/router/modules/SkillLearning/ToolRecommendation";
 // 动态路由（异步路由、导航栏路由）
 let asyncRoutes = [
     {
@@ -128,21 +132,20 @@ let asyncRoutes = [
         },
         children: [
             Resume,
-            Skill
+            Skill,
+            communicate,
+            tips,
         ]
     },
-    // {
-    //     meta: {
-    //         title: '技能学习',
-    //     },
-    //     children: [
-    //         BreadcrumbExample,
-    //         PositionLibrary,
-    //         DataAnalysis,
-    //         WordCloud,
-    //         SalaryAnalysis
-    //     ]
-    // },
+    {
+        meta: {
+            title: '技能学习',
+        },
+        children: [
+            GeneralSkills,
+            ToolRecommendation
+        ]
+    },
     // {
     //     meta: {
     //         title: '社区',

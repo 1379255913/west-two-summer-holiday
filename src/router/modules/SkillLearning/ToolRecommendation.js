@@ -1,35 +1,35 @@
 const Layout = () => import('@/layout/index.vue')
 
 export default {
-    path: '/job_hunting_skill',
+    path: '/tool_recommendation',
     component: Layout,
-    name: 'job_hunting_skill',
-    redirect: '/job_hunting_skill',
+    name: 'tool_recommendation',
+    redirect: '/tool_recommendation',
     meta: {
-        title: '职场思维',
-        icon: 'skill',
-        detail: 'job_hunting_skill_detail'
+        title: '工具推荐',
+        icon: 'tool',
+        detail: 'tool_recommendation_detail'
     },
     children: [
         {
             path: '',
-            name: 'job_hunting_skill_index',
+            name: 'tool_recommendation_index',
             component: () => import('@/views/CareerPath/article/index.vue'),
             meta: {
-                title: '职场思维',
+                title: '工具推荐',
                 breadcrumb: false,
                 sidebar: false,
-                activeMenu: '/job_hunting_skill'
+                activeMenu: '/tool_recommendation'
             }
         },
         {
             path: 'detail/:id',
-            name: 'job_hunting_skill_detail',
+            name: 'tool_recommendation_detail',
             component: () => import('@/views/CareerPath/article/detail.vue'),
             meta: {
                 title: '文章详情',
                 sidebar: false,
-                activeMenu: '/job_hunting_skill'
+                activeMenu: '/tool_recommendation'
             }
         },
     ]

@@ -198,6 +198,11 @@ const LikeOrFavorite = (type) =>{
     if ((type==='like'&&state.like===true)||(type==='favorite'&&state.favorite===true)){
         number = -1
     }
+    if (type==='like'){
+        state.like= !state.like
+    } else if (type==='favorite'){
+        state.favorite =!state.favorite
+    }
     putLikeOrFavorite(oid,type,number).then(res=>{
         console.log(123)
     })
@@ -225,11 +230,7 @@ const postComments = (type)=>{
         postComment(oid,comments.value,'').then(res=>{
             commentLoading.value = false
             comments.value = ''
-            state.comment.forEach(commentsArray=>{
-                if (commentsArray.comment_id===res.comment_id){
-                    commentsArray.push(res)
-                }
-            })
+            state.comment.push(res)
         })
     } else if (type==='son'){
         postComment(oid,form.comment,form.commentId).then(res=>{
@@ -293,6 +294,9 @@ p{
     /*border-color: #f5f7f9;*/
     :deep(img){
     max-width: 600px !important;
+    }
+    :deep(figure){
+        margin: 0;
     }
 }
 .slider{

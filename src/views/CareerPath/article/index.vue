@@ -41,16 +41,20 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
 import { onMounted,reactive,toRefs,ref,watch } from 'vue'
 import {getArticle} from "@/apiArray/article";
 import fakeImg from "@/util/fake.img";
 import getChinese from "@/util/getChinese"
 
+//获取当前路由名称
+const RouterName = useRoute().meta.title
+const DetailName = useRoute().meta.detail
+
 // 路由跳转
 const router = useRouter()
 const pushRouter = (id)=>{
-    router.push({ name: 'job_hunting_skill_detail', params: { id: id }})
+    router.push({ name: DetailName, params: { id: id }})
 }
 
 //文章变量
@@ -63,7 +67,7 @@ const state = reactive({
 
 //获取文章列表
 onMounted(()=>{
-    getArticle('职场思维',1).then(res=>{
+    getArticle(RouterName,1).then(res=>{
         state.articleArray = res.article
         state.total_article = res.total_article
         state.total_page = res.total_page
@@ -87,7 +91,7 @@ const loading = ref(true)
 const reloadArticle = (page)=>{
     backTop()
     loading.value=true
-    getArticle('职场思维',page).then(res=>{
+    getArticle(RouterName,page).then(res=>{
         state.articleArray = res.article
         state.current_page = parseInt(res.current_page)
         state.total_article = res.total_article

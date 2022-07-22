@@ -31,7 +31,7 @@ const useUserStore = defineStore(
                 console.log(data);
                 return new Promise((resolve, reject) => {
                     // 通过 mock 进行登录
-                    api.post('user/login', data).then(res => {
+                    api.post('user/login/', data).then(res => {
                         console.log(res)
                         localStorage.setItem('refresh_token', res.headers['refresh-token'])
                         localStorage.setItem('account', res.data.data.username)

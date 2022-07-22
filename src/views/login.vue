@@ -19,7 +19,7 @@ const settingsStore = useSettingsStore()
 import useUserStore from '@/store/modules/user'
 const userStore = useUserStore()
 
-import { checkCaptcha,getCaptcha,register } from '@/apiArray/user'
+import { checkCaptcha,getCaptcha,register,changePassword } from '@/apiArray/user'
 import {ref} from "vue";
 
 const banner = new URL('../assets/images/login-banner.png', import.meta.url).href
@@ -118,30 +118,39 @@ function handleRegister() {
 
 // 重置密码
 const resetForm = ref({
-    username: localStorage.login_account || '',
+    email: '',
     captcha: '',
-    newPassword: ''
+    password: ''
 })
 const resetRules = ref({
-    username: [
-        { required: true, trigger: 'blur', message: '请输入用户名' }
+    email: [
+        { required: true, trigger: 'blur', message: '请输入电子邮箱' },
+        { pattern: /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/, message: '请输入正确的邮箱', trigger: ['blur', 'change'] }
     ],
     captcha: [
-        { required: true, trigger: 'blur', message: '请输入验证码' }
+        { required: true, trigger: 'blur', message: '请输入验证码' },
+        { validator: (rule, value, callback) => {
+                let data={
+                    email: registerForm.value.email,
+                    captcha: registerForm.value.captcha
+                }
+                checkCaptcha(data).then(callback()).catch(callback(new Error('验证码错误')))
+            },trigger: 'blur' }
     ],
-    newPassword: [
+    password: [
         { required: true, trigger: 'blur', message: '请输入新密码' },
         { min: 6, max: 18, trigger: 'blur', message: '密码长度为6到18位' }
     ]
 })
 function handleReset() {
-    ElMessage({
-        message: '重置密码模块仅提供界面演示，无实际功能，需开发者自行扩展',
-        type: 'warning'
-    })
     proxy.$refs.resetFormRef.validate(valid => {
         if (valid) {
             // 这里编写业务代码
+            changePassword(resetForm.value).then(res=>{
+                ElMessage.success('密码修改成功')
+                formType.value='login'
+            }
+            )
         }
     })
 }
@@ -168,11 +177,11 @@ function testAccount(username) {
 }
 
 //验证码
-const GetCaptcha = () =>{
+const GetCaptcha = (text) =>{
     let emailTest = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/
-    if (emailTest.test(registerForm.value.email)){
+    if (emailTest.test(text)){
         let params = {
-            email:registerForm.value.email
+            email:text
         }
         countdown(60)
         getCaptcha(params).then(ElMessage.success('验证码已发送,请注意查收'))
@@ -284,7 +293,7 @@ const countdown = (time)=>{
                                 </el-icon>
                             </template>
                             <template #append>
-                                <el-button @click="GetCaptcha" :disabled="!isAvailable">{{ countdownNumber }}</el-button>
+                                <el-button @click="GetCaptcha(registerForm.email)" :disabled="!isAvailable">{{ countdownNumber }}</el-button>
                             </template>
                         </el-input>
                     </el-form-item>
@@ -328,11 +337,11 @@ const countdown = (time)=>{
                     <h3 class="title">忘记密码了? 🔒</h3>
                 </div>
                 <div>
-                    <el-form-item prop="username">
-                        <el-input ref="name" v-model="resetForm.username" placeholder="用户名" tabindex="1" autocomplete="on">
+                    <el-form-item prop="email">
+                        <el-input ref="name" v-model="resetForm.email" placeholder="电子邮箱" tabindex="1" autocomplete="on">
                             <template #prefix>
                                 <el-icon>
-                                    <svg-icon name="user" />
+                                    <svg-icon name="email" />
                                 </el-icon>
                             </template>
                         </el-input>
@@ -345,12 +354,12 @@ const countdown = (time)=>{
                                 </el-icon>
                             </template>
                             <template #append>
-                                <el-button>发送验证码</el-button>
+                                <el-button @click="GetCaptcha(resetForm.email)" :disabled="!isAvailable">{{ countdownNumber }}</el-button>
                             </template>
                         </el-input>
                     </el-form-item>
-                    <el-form-item prop="newPassword">
-                        <el-input ref="newPassword" v-model="resetForm.newPassword" :type="passwordType" placeholder="新密码" tabindex="3" autocomplete="on">
+                    <el-form-item prop="password">
+                        <el-input ref="password" v-model="resetForm.password" :type="passwordType" placeholder="新密码" tabindex="3" autocomplete="on">
                             <template #prefix>
                                 <el-icon>
                                     <svg-icon name="password" />

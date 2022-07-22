@@ -1,5 +1,6 @@
 import axios from 'axios'
 // import qs from 'qs'
+import { refresh } from '@/apiArray/user'
 import router from '@/router/index'
 import { ElMessage } from 'element-plus'
 import useUserStore from '@/store/modules/user'
@@ -63,9 +64,18 @@ api.interceptors.response.use(
             // 请求成功并且没有报错
             return Promise.resolve(response)
         } else {
-            // 这里做错误提示
-            ElMessage.error(response.data.message)
-            return Promise.reject(response)
+            console.log(response.headers.authorization)
+            if (response.headers.authorization&&response.headers.authorization==='refresh'){
+                refresh(localStorage.getItem('refresh_token')).then(res=>{
+                    userStore.token = res
+                    localStorage.setItem('token',res)
+                    return api(response.config)
+                })
+            } else {
+                // 这里做错误提示
+                ElMessage.error(response.data.message)
+                return Promise.reject(response)
+            }
         }
 
 
