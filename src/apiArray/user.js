@@ -39,7 +39,7 @@ export function refresh(refreshToken){
         api.post('user/refresh/', {
             refresh_token: refreshToken
         }).then(res => {
-            console.log(res.headers.authorization)
+            console.log(res)
             resolve(res.headers.authorization)
         }).catch(error => {
             reject(error)

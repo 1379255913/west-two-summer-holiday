@@ -71,9 +71,9 @@ let globalSettings = {
         // 是否开启导航搜索
         enableNavSearch: true,
         // 是否开启全屏
-        enableFullscreen: false,
+        enableFullscreen: true,
         // 是否开启页面刷新
-        enablePageReload: false,
+        enablePageReload: true,
         // 是否开启颜色主题
         enableColorScheme: false,
         // 是否开启应用配置（建议在生产环境关闭）

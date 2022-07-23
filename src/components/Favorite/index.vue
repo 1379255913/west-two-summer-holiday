@@ -29,7 +29,7 @@
             </svg>
         </div>
 
-        <div class="thums-up-text"><span>收藏</span></div>
+        <div class="thums-up-text"><span></span></div>
     </div>
 </template>
 

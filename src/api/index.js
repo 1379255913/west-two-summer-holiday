@@ -48,7 +48,7 @@ api.interceptors.request.use(
 )
 
 api.interceptors.response.use(
-    response => {
+     response => {
         const userStore = useUserStore()
         /**
          * 全局拦截请求发送后返回的数据，如果数据有报错则在这做全局的错误提示
@@ -64,12 +64,18 @@ api.interceptors.response.use(
             // 请求成功并且没有报错
             return Promise.resolve(response)
         } else {
-            console.log(response.headers.authorization)
-            if (response.headers.authorization&&response.headers.authorization==='refresh'){
-                refresh(localStorage.getItem('refresh_token')).then(res=>{
+            if (response.headers.authorization && response.headers.authorization === 'refresh') {
+                console.log(localStorage.getItem('refresh_token'))
+                return refresh(localStorage.getItem('refresh_token')).then(res => {
+                    console.log(res);
                     userStore.token = res
-                    localStorage.setItem('token',res)
-                    return api(response.config)
+                    localStorage.setItem('token', res)
+                    response.config.data = qs.parse(response.config.data)
+                    return  api(response.config).then(res2 => {
+                        return Promise.resolve(res2)
+                    }).catch(res2 => {
+                        return Promise.reject(res2)
+                    })
                 })
             } else {
                 // 这里做错误提示

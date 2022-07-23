@@ -21,11 +21,13 @@
                     {{ title }}
                 </div>
                 <span style="display:flex;flex-shrink: 0;">
-                    <span>
+                    <span style="display: flex;">
                         <like v-model:is-liked="like" @click="LikeOrFavorite('like')"></like>
+                        <span>{{ likeNumber }}</span>
                     </span>
-                    <span style="padding: 0 0 0 30px">
+                    <span style="padding: 0 0 0 30px;display: flex;">
                         <favorite v-model:is-liked="favorite" @click="LikeOrFavorite('favorite')"></favorite>
+                        <span>{{ favoriteNumber }}</span>
                     </span>
                 </span>
             </div>
@@ -164,7 +166,9 @@ const state = reactive({
     like:false,
     favorite:false,
     comment:[],
-    _oid: ''
+    _oid: '',
+    likeNumber:0,
+    favoriteNumber: 0,
 })
 const oid = useRoute().params.id
 onMounted(()=>{
@@ -179,6 +183,8 @@ onMounted(()=>{
             state.title = res.title
             state.content = res.content
             state.comment = res.comment
+            state.likeNumber = res.like
+            state.favoriteNumber = res.collect
             loading.value = false
         }
         if (resArray[1]){
@@ -190,7 +196,7 @@ onMounted(()=>{
     })
 })
 
-let { title,content,like,favorite,comment } = toRefs(state)
+let { title,content,like,favorite,comment,likeNumber,favoriteNumber } = toRefs(state)
 
 //点赞和收藏
 const LikeOrFavorite = (type) =>{
@@ -200,8 +206,10 @@ const LikeOrFavorite = (type) =>{
     }
     if (type==='like'){
         state.like= !state.like
+        state.likeNumber+=number
     } else if (type==='favorite'){
         state.favorite =!state.favorite
+        state.favoriteNumber+=number
     }
     putLikeOrFavorite(oid,type,number).then(res=>{
         console.log(123)
