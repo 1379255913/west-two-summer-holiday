@@ -112,7 +112,7 @@ a {
 }
 </style>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .el-menu--inline {
     background-color: var(--g-sub-sidebar-menu-bg) !important;
     .el-menu-item,

@@ -1,4 +1,6 @@
 <script setup name="ImageUpload">
+import {ElMessage} from "element-plus";
+
 const props = defineProps({
     action: {
         type: String,
@@ -43,6 +45,14 @@ const props = defineProps({
     ext: {
         type: Array,
         default: () => ['jpg', 'png', 'gif', 'bmp']
+    },
+    method:{
+        type: String,
+        default: 'post'
+    },
+    autoUpload:{
+        type: Boolean,
+        default: true
     }
 })
 
@@ -90,7 +100,20 @@ function onProgress(file) {
 function onSuccess(res) {
     uploadData.value.progress.preview = ''
     uploadData.value.progress.percent = 0
+    console.log(res)
     emit('on-success', res)
+}
+import {uploadAvatar} from "@/apiArray/user";
+const uploadAction = (option) => {
+    console.log(option)
+    let param = new FormData();
+    param.append('avatar', option.file,);
+    console.log(param.get('username'))
+    uploadAvatar(param).then((res) => {
+        ElMessage.success('图片上传成功！');
+        console.log(res)
+        emit('on-success', res)
+    })
 }
 </script>
 
@@ -102,6 +125,9 @@ function onSuccess(res) {
             :action="action"
             :data="data"
             :name="name"
+            :method="method"
+            :auto-upload="autoUpload"
+            :http-request="uploadAction"
             :before-upload="beforeUpload"
             :on-progress="onProgress"
             :on-success="onSuccess"

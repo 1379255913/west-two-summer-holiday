@@ -112,6 +112,7 @@ import communicate from "@/router/modules/CareerPath/communicate";
 import tips from "@/router/modules/CareerPath/tips";
 import GeneralSkills from "@/router/modules/SkillLearning/GeneralSkills";
 import ToolRecommendation from "@/router/modules/SkillLearning/ToolRecommendation";
+import senior_experience from "@/router/modules/Community/senior_experience";
 // 动态路由（异步路由、导航栏路由）
 let asyncRoutes = [
     {
@@ -146,18 +147,14 @@ let asyncRoutes = [
             ToolRecommendation
         ]
     },
-    // {
-    //     meta: {
-    //         title: '社区',
-    //     },
-    //     children: [
-    //         BreadcrumbExample,
-    //         PositionLibrary,
-    //         DataAnalysis,
-    //         WordCloud,
-    //         SalaryAnalysis
-    //     ]
-    // }
+    {
+        meta: {
+            title: '社区',
+        },
+        children: [
+            senior_experience
+        ]
+    }
 ]
 
 import { setupLayouts } from 'virtual:generated-layouts'

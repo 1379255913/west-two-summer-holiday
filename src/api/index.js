@@ -36,7 +36,7 @@ api.interceptors.request.use(
         }
         // 是否将 POST 请求参数进行字符串化处理
         if (request.method === 'post'||request.method === 'put') {
-            if (request.data) {
+            if (request.data&&!(request.data instanceof FormData)) {
                 request.data=qs.stringify(request.data)
             }
             // request.data = qs.stringify(request.data, {
@@ -71,7 +71,7 @@ api.interceptors.response.use(
                     userStore.token = res
                     localStorage.setItem('token', res)
                     response.config.data = qs.parse(response.config.data)
-                    return  api(response.config).then(res2 => {
+                    return api(response.config).then(res2 => {
                         return Promise.resolve(res2)
                     }).catch(res2 => {
                         return Promise.reject(res2)

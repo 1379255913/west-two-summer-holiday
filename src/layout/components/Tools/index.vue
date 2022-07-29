@@ -65,9 +65,9 @@ function userCommand(command) {
         </div>
         <el-dropdown class="user-container" size="default" @command="userCommand">
             <div class="user-wrapper">
-                <el-avatar size="small" :src="'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'">
+                <el-avatar size="small" :src="userStore.avatar">
                 </el-avatar>
-                {{ userStore.account }}
+                {{ userStore.username }}
                 <el-icon>
                     <svg-icon name="ep:caret-bottom" />
                 </el-icon>

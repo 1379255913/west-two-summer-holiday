@@ -8,27 +8,73 @@
 </route>
 
 <script setup name="PersonalSetting">
+import useUserStore from "@/store/modules/user";
+import { nextTick,ref } from 'vue'
+import { uploadInform } from "@/apiArray/user";
+import { ElMessage } from 'element-plus'
 const router = useRouter()
-
+const userStore = useUserStore()
 const form = ref({
-    headimg: '',
-    mobile: '',
-    name: '',
-    qq: '',
-    wechat: ''
+    headimg: userStore.avatar || '',
+    username: userStore.username || '',
+    tags: userStore.tags || []
 })
+const OldForm = {
+    headimg: userStore.avatar || '',
+    username: userStore.username || '',
+    tags: userStore.tags?JSON.parse(JSON.stringify(userStore.tags)):[]
+}
 
 function handleSuccess(res) {
-    if (res.error == '') {
-        form.value.headimg = res.data.path
-    } else {
-        ElMessage.warning(res.error)
-    }
+    form.value.headimg = res.avatar
+    userStore.avatar = res.avatar
+    localStorage.setItem('avatar',res.avatar)
 }
 function editPassword() {
     router.push({
         name: 'personalEditPassword'
     })
+}
+//修改tags
+const inputValue = ref('')
+const inputVisible = ref(false)
+const InputRef = ref('')
+const handleClose = (tag) => {
+    form.value.tags.splice(form.value.tags.indexOf(tag), 1)
+}
+const showInput = () => {
+    inputVisible.value = true
+    nextTick(() => {
+        InputRef.value.focus()
+    })
+}
+const handleInputConfirm = () => {
+    if (inputValue.value) {
+        form.value.tags.push(inputValue.value)
+    }
+    inputVisible.value = false
+    inputValue.value = ''
+}
+const submitInform = ()=>{
+    console.log(form.value.username,JSON.stringify(form.value.tags))
+    let data = {}
+    data.username = form.value.username
+    data.tags = JSON.stringify(form.value.tags)
+    uploadInform(data).then(res=>{
+        ElMessage.success('修改成功')
+        userStore.username = res.username
+        localStorage.setItem('username',res.username)
+        userStore.tags = res.tags
+        localStorage.setItem('tags',JSON.stringify(res.tags))
+    }).catch(error=>{
+
+    })
+}
+const rollbackInform = ()=>{
+    form.value.headimg= OldForm.headimg
+    form.value.username= OldForm.username
+    userStore.tags= OldForm.tags?JSON.parse(JSON.stringify(OldForm.tags)):[]
+    form.value.tags = userStore.tags
 }
 </script>
 
@@ -41,25 +87,53 @@ function editPassword() {
                     <el-row :gutter="20">
                         <el-col :span="16">
                             <el-form ref="formRef" :model="form" label-width="120px" label-suffix="：">
-                                <el-form-item label="名 称">
-                                    <el-input v-model="form.name" placeholder="请输入你的名称" />
+                                <el-form-item label="用户名">
+                                    <el-input v-model="form.username" placeholder="请输入你的用户名" />
                                 </el-form-item>
-                                <el-form-item label="手机号">
-                                    <el-input v-model="form.mobile" placeholder="请输入你的手机号" />
+                                <el-form-item label="标 签">
+                                    <el-tag
+                                        v-for="tag in form.tags"
+                                        :key="tag"
+                                        class="mx-1"
+                                        closable
+                                        :disable-transitions="false"
+                                        @close="handleClose(tag)"
+                                    >
+                                        {{ tag }}
+                                    </el-tag>
+                                    <el-input
+                                        v-if="inputVisible"
+                                        ref="InputRef"
+                                        v-model="inputValue"
+                                        class="ml-1 w-20"
+                                        size="small"
+                                        @keyup.enter="handleInputConfirm"
+                                        @blur="handleInputConfirm"
+                                    />
+                                    <el-button v-else class="button-new-tag ml-1" size="small" @click="showInput">
+                                        新增
+                                    </el-button>
                                 </el-form-item>
-                                <el-form-item label="QQ 号">
-                                    <el-input v-model="form.qq" placeholder="请输入你的 QQ 号" />
-                                </el-form-item>
-                                <el-form-item label="微信号">
-                                    <el-input v-model="form.wechat" placeholder="请输入你的微信号" />
-                                </el-form-item>
+<!--                                <el-form-item label="QQ 号">-->
+<!--                                    <el-input v-model="form.qq" placeholder="请输入你的 QQ 号" />-->
+<!--                                </el-form-item>-->
+<!--                                <el-form-item label="微信号">-->
+<!--                                    <el-input v-model="form.wechat" placeholder="请输入你的微信号" />-->
+<!--                                </el-form-item>-->
                                 <el-form-item>
-                                    <el-button type="primary">保存</el-button>
+                                    <el-button type="danger" @click="rollbackInform">复原</el-button>
+                                    <el-button type="primary" @click="submitInform">保存</el-button>
                                 </el-form-item>
                             </el-form>
                         </el-col>
                         <el-col :span="8">
-                            <image-upload v-model:url="form.headimg" action="http://scrm.1daas.com/api/upload/upload" name="image" :data="{'token':'TKD628431923530324'}" notip class="headimg-upload" @on-success="handleSuccess" />
+<!--                            <el-upload class="avatar-uploader" v-model:url="form.headimg" :action="''">-->
+<!--                                <img v-if="imageUrl" :src="imageUrl" class="avatar" />-->
+<!--                                <el-icon v-else :size="80">-->
+<!--                                    <svg-icon  name="plus" />-->
+<!--                                </el-icon>-->
+<!--                            </el-upload>-->
+                            <image-upload v-model:url="form.headimg" action="http://81.70.180.118:5000/api/v1/user/" name="image" :autoUpload="true" notip class="headimg-upload" @on-success="handleSuccess" />
                         </el-col>
                     </el-row>
                 </el-tab-pane>
@@ -101,6 +175,17 @@ function editPassword() {
 </template>
 
 <style lang="scss" scoped>
+.avatar-uploader{
+    width: 178px;
+    height: 178px;
+    display: block;
+}
+.mx-1{
+    margin: 0 20px 0 0;
+}
+.w-20{
+    width: 100px;
+}
 :deep(.el-tabs) {
     .el-tabs__header .el-tabs__nav {
         .el-tabs__active-bar {

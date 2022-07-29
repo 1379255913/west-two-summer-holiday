@@ -54,7 +54,7 @@ const DetailName = useRoute().meta.detail
 // 路由跳转
 const router = useRouter()
 const pushRouter = (id)=>{
-    router.push({ name: DetailName, params: { id: id }})
+    router.push({ name: DetailName, params: { id: id,type:RouterName }})
 }
 
 //文章变量

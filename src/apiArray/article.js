@@ -1,6 +1,6 @@
 import api from '@/api'
 import { ElMessage } from 'element-plus'
-
+//获取文章列表
 export function getArticle(type,page){
     return new Promise((resolve, reject) => {
         api.get('article/', {
@@ -15,7 +15,7 @@ export function getArticle(type,page){
         })
     })
 }
-
+//获取文章详情
 export function getArticleDetail(oid){
     return new Promise((resolve, reject) => {
         api.get('article/', {
@@ -30,7 +30,7 @@ export function getArticleDetail(oid){
         })
     })
 }
-
+//点赞和收藏
 export function putLikeOrFavorite(oid,type,number){
     let like = 0
     let favorite = 0
@@ -53,7 +53,7 @@ export function putLikeOrFavorite(oid,type,number){
         })
     })
 }
-
+//获取点赞和收藏数
 export function getLikeOrFavorite(oid){
     return new Promise((resolve, reject) => {
         api.get('article/lc/', {
@@ -68,7 +68,7 @@ export function getLikeOrFavorite(oid){
         })
     })
 }
-
+//发送评论
 export function postComment(article_id,comment,oid){
     let data = {}
     if (oid){
@@ -85,7 +85,30 @@ export function postComment(article_id,comment,oid){
     }
     console.log(data);
     return new Promise((resolve, reject) => {
-        api.post('article/', data).then(res => {
+        api.post('article/comment/', data).then(res => {
+            console.log(res);
+            resolve(res.data.data)
+        }).catch(error => {
+            reject(error)
+        })
+    })
+}
+//获取文章推荐
+export function getRecommendArticle(recommend,type){
+    let params ={}
+    if (recommend==='lc'){
+        params.lc = 'true'
+        params.type = type
+    }
+    else if (recommend==='ai'){
+        params.ai = 'true'
+        params.article_id = type
+    }
+    console.log(params)
+    return new Promise((resolve, reject) => {
+        api.get('article/recommend/',{
+            params:params
+        }).then(res => {
             console.log(res);
             resolve(res.data.data)
         }).catch(error => {

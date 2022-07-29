@@ -86,7 +86,7 @@ let globalSettings = {
         // 版权信息配置，格式为：Copyright © [dates] <company> <beian>
         dates: '2022',
         company: '毕业剩转圈圈',
-        website: 'https://fantastic-admin.netlify.app',
+        website: 'http://47.112.108.202/',
         beian: ''
     }
 }

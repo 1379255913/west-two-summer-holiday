@@ -13,6 +13,8 @@ const useUserStore = defineStore(
             username: localStorage.username || '',
             token: localStorage.token || '',
             failure_time: localStorage.failure_time || '',
+            avatar: localStorage.avatar || '',
+            tags: localStorage.tags?JSON.parse(localStorage.tags):[],
             permissions: []
         }),
         getters: {
@@ -38,10 +40,14 @@ const useUserStore = defineStore(
                         localStorage.setItem('username', res.data.data.username)
                         localStorage.setItem('token', res.headers['authorization'])
                         localStorage.setItem('failure_time', (Math.ceil(new Date().getTime() / 1000) + 24 * 60 * 60).toString())
+                        localStorage.setItem('avatar', res.data.data.avatar)
+                        localStorage.setItem('tags', JSON.stringify(res.data.data.tags))
                         this.username= res.data.data.username
                         this.account = res.data.data.username
                         this.token = res.headers['authorization']
                         this.failure_time = (Math.ceil(new Date().getTime() / 1000) + 24 * 60 * 60).toString()
+                        this.avatar = res.data.data.avatar
+                        this.tags = res.data.data.tags
                         console.log(this.username,this.token,this.failure_time)
                         resolve()
                     }).catch(error => {
@@ -57,10 +63,15 @@ const useUserStore = defineStore(
                     localStorage.removeItem('token')
                     localStorage.removeItem('failure_time')
                     localStorage.removeItem('username')
+                    localStorage.removeItem('refresh_token')
+                    localStorage.removeItem('avatar')
+                    localStorage.removeItem('tags')
                     this.username= ''
                     this.account = ''
                     this.token = ''
                     this.failure_time = ''
+                    this.avatar = ''
+                    this.tags = ''
                     routeStore.removeRoutes()
                     menuStore.setActived(0)
                     resolve()

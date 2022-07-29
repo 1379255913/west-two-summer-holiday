@@ -105,24 +105,7 @@
         </page-main>
 
         <page-main style="width: 25%">
-            <div class="slider">
-                <div class="hot-news">
-                    <span class="title-left"></span>
-                    <span class="slider-title">
-                        热门新闻
-                    </span>
-                    <ul style="padding: 0">
-                        <li class="slider-text" v-for="item in 3">【海归必读】远程面试如何准备？</li>
-                    </ul>
-                    <span class="title-left"></span>
-                    <span class="slider-title">
-                        为你推荐
-                    </span>
-                    <ul style="padding: 0">
-                        <li class="slider-text" v-for="item in 3">【海归必读】远程面试如何准备？</li>
-                    </ul>
-                </div>
-            </div>
+            <recommend></recommend>
         </page-main>
         <el-dialog v-model="dialogFormVisible" title="回复">
             <el-form :model="form">
@@ -155,8 +138,9 @@
 <script setup>
 import Like from '@/components/Like/index.vue'
 import Favorite from '@/components/Favorite/index.vue'
+import Recommend from './recommend.vue'
 import { onMounted,reactive,toRefs,ref } from 'vue'
-import {getArticleDetail,putLikeOrFavorite,getLikeOrFavorite,postComment} from "@/apiArray/article";
+import {getArticleDetail,putLikeOrFavorite,getLikeOrFavorite,postComment} from "@/apiArray/article"
 import {useRouter, useRoute} from 'vue-router'
 import timeAgo from "@/util/timeAgo";
 //获取文章信息
