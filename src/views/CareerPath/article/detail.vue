@@ -99,7 +99,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </page-main>
@@ -222,7 +221,7 @@ const postComments = (type)=>{
         postComment(oid,comments.value,'').then(res=>{
             commentLoading.value = false
             comments.value = ''
-            state.comment.push(res)
+            state.comment.unshift(res)
         })
     } else if (type==='son'){
         postComment(oid,form.comment,form.commentId).then(res=>{
@@ -231,7 +230,7 @@ const postComments = (type)=>{
             form.comment = ''
             state.comment.forEach(commentsArray=>{
                 if (commentsArray.comment_id===res.comment_id){
-                    commentsArray.subcomment.push(res)
+                    commentsArray.subcomment.unshift(res)
                 }
             })
         })

@@ -1,59 +1,59 @@
 <template>
     <div>
-<!--        <page-header title="欢迎使用求职大数据">-->
-<!--        </page-header>-->
         <page-main style="height: 100%">
             <ul>
                 <el-skeleton style="width: 100%;" animated v-for="t in 5" :loading="loading">
                     <template #template>
                         <li class="item-box">
-                                <div class="inside-box">
-                                    <el-skeleton-item variant="image" class="image" />
-                                    <div class="text">
-                                        <el-skeleton-item variant="p" style="width: 500px" class="title"/>
-                                        <div style="padding: 20px 0 0 0"></div>
-                                        <el-skeleton-item variant="p" style="width: 800px;"/>
-                                        <div style="padding: 20px 0 0 0"></div>
-                                        <el-skeleton-item variant="p" style="width: 800px;"/>
-                                    </div>
+                            <div class="inside-box">
+                                <el-skeleton-item variant="image" class="image" />
+                                <div class="text">
+                                    <el-skeleton-item variant="p" style="width: 500px" class="title"/>
+                                    <div style="padding: 20px 0 0 0"></div>
+                                    <el-skeleton-item variant="p" style="width: 800px;"/>
+                                    <div style="padding: 20px 0 0 0"></div>
+                                    <el-skeleton-item variant="p" style="width: 800px;"/>
                                 </div>
+                            </div>
                         </li>
                     </template>
                 </el-skeleton>
+                <el-empty v-show="articleArray.length===0&&loading===false" description="你还没有收藏哦" />
                 <li class="item-box" v-for="(item,index) in articleArray" :key="item._id">
                     <div class="inside-box">
-                        <div class="image" @click="pushRouter(item._id)">
+                        <div class="image" @click="pushRouter(item._id,item.type)">
                             <img :src="item.title_img||fakeImg()" alt="图片" style="width: 100%">
                         </div>
                         <div class="text">
-                            <p class="title" @click="pushRouter(item._id)">{{ item.title }}</p>
+                            <p class="title" @click="pushRouter(item._id,item.type)">{{ item.title }}</p>
                             <p class="summary">{{ item.content }}</p>
                         </div>
                     </div>
                 </li>
                 <li class="page" v-show="!loading">
-                    <el-pagination background layout="prev, pager, next" :page-count="total_page" v-model:current-page="current_page"  :total="null"/>
+                    <el-pagination background layout="prev, pager, next" :page-count="total_page" v-model:current-page="current_page"  :total="null" :hide-on-single-page="true"/>
                 </li>
             </ul>
+
         </page-main>
     </div>
 </template>
 
 <script setup>
-import {useRoute, useRouter} from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { onMounted,reactive,toRefs,ref,watch } from 'vue'
-import {getArticle} from "@/apiArray/article";
+import { getFavoriteArticle } from "@/apiArray/article";
 import fakeImg from "@/util/fake.img";
-import getChinese from "@/util/getChinese"
+import getRouter from '@/util/router'
 
 //获取当前路由名称
-const RouterName = useRoute().meta.title
-const DetailName = useRoute().meta.detail
+// const RouterName = useRoute().meta.title
+// const DetailName = useRoute().meta.detail
 
 // 路由跳转
 const router = useRouter()
-const pushRouter = (id)=>{
-    router.push({ name: DetailName, params: { id: id,type:RouterName }})
+const pushRouter = (id,type)=>{
+    router.push({ name: getRouter(type), params: { id: id,type:type }})
 }
 
 //文章变量
@@ -66,8 +66,8 @@ const state = reactive({
 
 //获取文章列表
 onMounted(()=>{
-    getArticle(RouterName,1).then(res=>{
-        state.articleArray = res.article
+    getFavoriteArticle(1).then(res=>{
+        state.articleArray = res.collect
         state.total_article = res.total_article
         state.total_page = res.total_page
         loading.value = false
@@ -90,8 +90,8 @@ const loading = ref(true)
 const reloadArticle = (page)=>{
     backTop()
     loading.value=true
-    getArticle(RouterName,page).then(res=>{
-        state.articleArray = res.article
+    getFavoriteArticle(page).then(res=>{
+        state.articleArray = res.collect
         state.current_page = parseInt(res.current_page)
         state.total_article = res.total_article
         state.total_page = res.total_page
@@ -113,7 +113,7 @@ const backTop = () => {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 li, ul{
     list-style: none;
     width: 100%;

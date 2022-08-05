@@ -22,15 +22,25 @@ export default {
                 activeMenu: '/senior_experience'
             }
         },
-        // {
-        //     path: 'detail/:id',
-        //     name: 'senior_experience_detail',
-        //     component: () => import('@/views/CareerPath/article/detail.vue'),
-        //     meta: {
-        //         title: '文章详情',
-        //         sidebar: false,
-        //         activeMenu: '/senior_experience'
-        //     }
-        // },
+        {
+            path: 'senior_experience_question',
+            name: 'senior_experience_question',
+            component: () => import('@/views/Community/send/index.vue'),
+            meta: {
+                title: '提问',
+                sidebar: false,
+                activeMenu: '/senior_experience'
+            }
+        },
+        {
+            path: 'detail/:id',
+            name: 'senior_experience_detail',
+            component: () => import('@/views/Community/detail.vue'),
+            meta: {
+                title: '提问详情',
+                sidebar: false,
+                activeMenu: '/senior_experience'
+            }
+        },
     ]
 }

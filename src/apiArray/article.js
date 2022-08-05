@@ -116,3 +116,18 @@ export function getRecommendArticle(recommend,type){
         })
     })
 }
+//获取收藏的文章
+export function getFavoriteArticle(page){
+    return new Promise((resolve, reject) => {
+        api.get('article/lc/', {
+            params: {
+                page: page,
+            }
+        }).then(res => {
+            console.log(res);
+            resolve(res.data.data)
+        }).catch(error => {
+            reject(error)
+        })
+    })
+}

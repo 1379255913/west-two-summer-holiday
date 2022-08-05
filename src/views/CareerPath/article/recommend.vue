@@ -7,7 +7,7 @@
                     </span>
             <ul style="padding: 0">
                 <li class="slider-text" v-for="(item,index) in hotRecommend" :key="item._id">
-                    <div class="route-push" @click="pushRouter(item._id)">{{ item.title.replace('\n','') }}</div>
+                    <div class="route-push" @click="pushRouter(item._id,item.type)">{{ item.title.replace('\n','') }}</div>
                 </li>
             </ul>
             <span class="title-left"></span>
@@ -16,7 +16,7 @@
                     </span>
             <ul style="padding: 0">
                 <li class="slider-text" v-for="(item,index) in aiRecommend" :key="item._id">
-                    <div class="route-push" @click="pushRouter(item._id)">{{ item.title.replace('\n','') }}</div>
+                    <div class="route-push" @click="pushRouter(item._id,item.type)">{{ item.title.replace('\n','') }}</div>
                 </li>
             </ul>
         </div>
@@ -27,6 +27,7 @@
 import { ref,onMounted } from 'vue'
 import {getRecommendArticle} from "@/apiArray/article"
 import { useRoute,useRouter } from 'vue-router'
+import  getRouter  from '@/util/router'
 //获取文章推荐
 const articleType = useRoute().params.type
 const oid = useRoute().params.id
@@ -42,9 +43,10 @@ onMounted(()=>{
 })
 //文章跳转
 const router = useRouter()
-const routerName = useRoute().name
-const pushRouter = (id)=>{
-    router.push({ name: routerName, params: { id: id, type: articleType }})
+// const routerName = useRoute().name
+const pushRouter = (id,type)=>{
+    console.log(getRouter(type))
+    router.push({ name: getRouter(type), params: { id: id, type: articleType }})
 }
 </script>
 

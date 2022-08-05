@@ -1,68 +1,60 @@
-<route>
-{
-    name: 'dashboard',
-    meta: {
-        title: "控制台"
-    }
-}
-</route>
-
 <template>
-    <div>
-        <page-header title="欢迎使用求职大数据">
-        </page-header>
-            <div class="dashboard-container">
-                <el-row :gutter="40" class="card-panel__col">
-                    <el-col :span="6" class="card-panel__col">
-                        <div class="card-panel">
-                            <div class="card-panel-icon-wrapper icon-people">
-                                <svg-icon name="job" class="card-panel-icon" />
-                            </div>
-                            <div class="card-panel-description">
-                                <div class="card-panel-text">职位数</div>
+    <div class="dashboard-container">
+        <el-row :gutter="40" class="card-panel__col">
+            <el-col :span="6" class="card-panel__col">
+                <div class="card-panel">
+                    <div class="card-panel-icon-wrapper icon-people">
+                        <svg-icon name="job" class="card-panel-icon" />
+                    </div>
+                    <div class="card-panel-description">
+                        <div class="card-panel-text">职位数</div>
+                        <count-up class="card-panel-num" :end-val="38829"></count-up>
+                    </div>
+                </div>
+            </el-col>
 
-                            </div>
-                        </div>
-                    </el-col>
+            <el-col :span="6" class="card-panel__col">
+                <div class="card-panel">
+                    <div class="card-panel-icon-wrapper icon-message">
+                        <svg-icon name="city" class="card-panel-icon" />
+                    </div>
+                    <div class="card-panel-description">
+                        <div class="card-panel-text">城市数</div>
+                        <count-up class="card-panel-num" :end-val="86"></count-up>
+                    </div>
+                </div>
+            </el-col>
 
-                    <el-col :span="6" class="card-panel__col">
-                        <div class="card-panel">
-                            <div class="card-panel-icon-wrapper icon-message">
-                                <svg-icon name="city" class="card-panel-icon" />
-                            </div>
-                            <div class="card-panel-description">
-                                <div class="card-panel-text">城市数</div>
-                                <div class="card-panel-num">1000</div>
-                            </div>
-                        </div>
-                    </el-col>
-
-                    <el-col :span="6" class="card-panel__col">
-                        <div class="card-panel">
-                            <div class="card-panel-icon-wrapper icon-money">
-                                <svg-icon name="company" class="card-panel-icon" />
-                            </div>
-                            <div class="card-panel-description">
-                                <div class="card-panel-text">公司数</div>
-                                <div class="card-panel-num">1000</div>
-                            </div>
-                        </div>
-                    </el-col>
-                    <el-col :span="6" class="card-panel__col">
-                        <div class="card-panel">
-                            <div class="card-panel-icon-wrapper icon-shopping">
-                                <svg-icon name="job-type" class="card-panel-icon" />
-                            </div>
-                            <div class="card-panel-description">
-                                <div class="card-panel-text">职位类型</div>
-                                <div class="card-panel-num">1000</div>
-                            </div>
-                        </div>
-                    </el-col>
-                </el-row>
-            </div>
+            <el-col :span="6" class="card-panel__col">
+                <div class="card-panel">
+                    <div class="card-panel-icon-wrapper icon-money">
+                        <svg-icon name="company" class="card-panel-icon" />
+                    </div>
+                    <div class="card-panel-description">
+                        <div class="card-panel-text">公司数</div>
+                        <count-up class="card-panel-num" :end-val="7635"></count-up>
+                    </div>
+                </div>
+            </el-col>
+            <el-col :span="6" class="card-panel__col">
+                <div class="card-panel">
+                    <div class="card-panel-icon-wrapper icon-shopping">
+                        <svg-icon name="job-type" class="card-panel-icon" />
+                    </div>
+                    <div class="card-panel-description">
+                        <div class="card-panel-text">职位类型</div>
+                        <count-up class="card-panel-num" :end-val="943"></count-up>
+                    </div>
+                </div>
+            </el-col>
+        </el-row>
     </div>
 </template>
+
+<script setup>
+import CountUp from 'vue-countup-v3'
+</script>
+
 <style lang="scss" scoped>
 .dashboard-container {
     padding: 24px;
@@ -221,4 +213,3 @@
     fill: currentColor;
 }
 </style>
-

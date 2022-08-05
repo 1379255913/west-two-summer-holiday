@@ -12,7 +12,7 @@ export default {
         {
             path: '',
             name: 'word_cloud_index',
-            component: () => import('@/views/breadcrumb_example/list1.vue'),
+            component: () => import('@/views/BigData/test.vue'),
             meta: {
                 title: '词云分析',
                 breadcrumb: false,

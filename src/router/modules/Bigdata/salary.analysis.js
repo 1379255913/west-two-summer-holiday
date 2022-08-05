@@ -12,7 +12,7 @@ export default {
         {
             path: '',
             name: 'salary_analysis_index',
-            component: () => import('@/views/breadcrumb_example/list1.vue'),
+            component: () => import('@/views/BigData/test.vue'),
             meta: {
                 title: '薪水分析',
                 breadcrumb: false,

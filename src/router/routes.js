@@ -80,6 +80,26 @@ let systemRoutes = [
         ]
     },
     {
+        path: '/my_collect',
+        component: () => import('@/layout/index.vue'),
+        name: 'myCollect',
+        redirect: '/my_collect',
+        meta: {
+            title: '我的收藏',
+            breadcrumb: false
+        },
+        children: [
+            {
+                path: '',
+                name: 'myCollect_index',
+                component: () => import('@/views/personal/myfavorite.vue'),
+                meta: {
+                    title: '我的收藏',
+                }
+            },
+        ]
+    },
+    {
         path: '/reload',
         component: () => import('@/layout/index.vue'),
         meta: {
@@ -104,6 +124,7 @@ import MultilevelMenuExample from './modules/multilevel.menu.example'
 import BreadcrumbExample from './modules/breadcrumb.example'
 import PositionLibrary from './modules/Bigdata/position.library'
 import SalaryAnalysis from './modules/Bigdata/salary.analysis'
+import JobRecommend from './modules/Bigdata/job.recommend'
 import WordCloud from './modules/Bigdata/wordcloud'
 import DataAnalysis from './modules/Bigdata/data.analysis'
 import Resume from './modules/CareerPath/resume'
@@ -120,11 +141,11 @@ let asyncRoutes = [
             title: '求职大数据',
         },
         children: [
-            BreadcrumbExample,
             PositionLibrary,
             DataAnalysis,
             WordCloud,
-            SalaryAnalysis
+            SalaryAnalysis,
+            JobRecommend
         ]
     },
     {
