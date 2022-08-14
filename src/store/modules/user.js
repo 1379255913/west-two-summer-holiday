@@ -15,7 +15,9 @@ const useUserStore = defineStore(
             failure_time: localStorage.failure_time || '',
             avatar: localStorage.avatar || '',
             tags: localStorage.tags?JSON.parse(localStorage.tags):[],
-            permissions: []
+            permissions: localStorage.permissions?JSON.parse(localStorage.permissions):[],
+            role: localStorage.role?parseInt(localStorage.role):1,
+            forbid: localStorage.forbid?parseFloat(localStorage.forbid):1760123524
         }),
         getters: {
             isLogin: state => {
@@ -26,6 +28,9 @@ const useUserStore = defineStore(
                     }
                 }
                 return retn
+            },
+            isForbid: state => {
+                return state.forbid >= new Date().getTime() / 1000;
             }
         },
         actions: {
@@ -42,13 +47,17 @@ const useUserStore = defineStore(
                         localStorage.setItem('failure_time', (Math.ceil(new Date().getTime() / 1000) + 24 * 60 * 60).toString())
                         localStorage.setItem('avatar', res.data.data.avatar)
                         localStorage.setItem('tags', JSON.stringify(res.data.data.tags))
+                        localStorage.setItem('role',res.data.data.role)
+                        localStorage.setItem('forbid',res.data.data.forbid)
                         this.username= res.data.data.username
                         this.account = res.data.data.username
                         this.token = res.headers['authorization']
                         this.failure_time = (Math.ceil(new Date().getTime() / 1000) + 24 * 60 * 60).toString()
                         this.avatar = res.data.data.avatar
                         this.tags = res.data.data.tags
-                        console.log(this.username,this.token,this.failure_time)
+                        this.role = res.data.data.role
+                        this.forbid = res.data.data.forbid
+                        this.getPermissions().then()
                         resolve()
                     }).catch(error => {
                         reject(error)
@@ -66,12 +75,18 @@ const useUserStore = defineStore(
                     localStorage.removeItem('refresh_token')
                     localStorage.removeItem('avatar')
                     localStorage.removeItem('tags')
+                    localStorage.removeItem('role')
+                    localStorage.removeItem('forbid')
+                    localStorage.removeItem('permission')
                     this.username= ''
                     this.account = ''
                     this.token = ''
                     this.failure_time = ''
                     this.avatar = ''
                     this.tags = ''
+                    this.role = 1
+                    this.forbid = 1760123524
+                    this.permission = []
                     routeStore.removeRoutes()
                     menuStore.setActived(0)
                     resolve()
@@ -80,16 +95,25 @@ const useUserStore = defineStore(
             // 获取我的权限
             getPermissions() {
                 return new Promise(resolve => {
-                    // 通过 mock 获取权限
-                    api.get('member/permission', {
-                        baseURL: '/mock/',
-                        params: {
-                            account: this.account
-                        }
-                    }).then(res => {
-                        this.permissions = res.data.permissions
-                        resolve(res.data.permissions)
-                    })
+                    let permissions = []
+                    if (this.role === 2) {
+                        permissions = [
+                            'permission.browse',
+                            'permission.edit',
+                            'permission.remove'
+                        ]
+                    } else if (this.role === 1) {
+                        permissions = [
+                            'permission.browse'
+                        ]
+                    }
+                    if (this.forbid<new Date().getTime()/1000){
+                        permissions.push('permission.create')
+                    }
+                    console.log(permissions)
+                    this.permissions = permissions
+                    localStorage.setItem('permission',JSON.stringify(permissions))
+                    resolve(permissions)
                 })
             },
             editPassword(data) {
@@ -104,7 +128,7 @@ const useUserStore = defineStore(
                         resolve()
                     })
                 })
-            }
+            },
         }
     }
 )

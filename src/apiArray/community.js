@@ -69,3 +69,68 @@ export function postAnswer(data){
         })
     })
 }
+//图片上传
+export function tinymceUpload(imgFile) {
+    let formData = new FormData()
+    formData.append('photo', imgFile)
+    return new Promise((resolve, reject) => {
+        api.post('forum/photo/',
+            formData
+            , {
+                'Content-type': 'multipart/form-data'
+            }).then(res => {
+            console.log(res.data.data)
+            resolve(res.data.data)
+        }).catch(error => {
+            reject(error)
+        })
+    })
+}
+//发起投票
+export function postVote(data){
+    return new Promise((resolve, reject) => {
+        api.post('forum/vote/', data).then(res => {
+            resolve(res.data.data)
+        }).catch(error => {
+            reject(error)
+        })
+    })
+}
+//获取投票列表
+export function getVoteList(page){
+    return new Promise((resolve, reject) => {
+        api.get('forum/vote/',{
+            params: {
+                page: page
+            }
+        }).then(res => {
+            resolve(res.data.data)
+        }).catch(error => {
+            reject(error)
+        })
+    })
+}
+//获取投票
+export function getVoteDetail(topic_id){
+    return new Promise((resolve, reject) => {
+        api.get('forum/vote/',{
+            params: {
+                topic_id: topic_id
+            }
+        }).then(res => {
+            resolve(res.data.data)
+        }).catch(error => {
+            reject(error)
+        })
+    })
+}
+//进行投票
+export function putVote(data){
+    return new Promise((resolve, reject) => {
+        api.put('forum/vote/',data).then(res => {
+            resolve(res.data.data)
+        }).catch(error => {
+            reject(error)
+        })
+    })
+}

@@ -4,12 +4,41 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <style>
-        p{
-            padding: 15px 0;
-        }
+        .vote{width:288px; height:220px; margin:60px auto 20px auto;position:relative}
+        .votetitle{width:100%;height:62px; background:url(icon.png) no-repeat 0 30px; font-size:15px}
+        .red{position:absolute; left:0; top:90px; height:80px;}
+        .blue{position:absolute; right:0; top:90px; height:80px;}
+        .votetxt{line-height:24px}
+        .votetxt span{float:right}
+        .redhand{position:absolute; left:0;width:36px; height:36px; background:url(icon.png) no-repeat -1px -38px;cursor:pointer}
+        .bluehand{position:absolute; right:0;width:36px; height:36px; background:url(icon.png) no-repeat -41px -38px;cursor:pointer}
+        .grayhand{width:34px; height:34px; background:url(icon.png) no-repeat -83px -38px;cursor:pointer}
+        .redbar{position:absolute; left:42px; margin-top:8px;}
+        .bluebar{position:absolute; right:42px; margin-top:8px; }
+        .redbar span{display:block; height:6px; background:red; width:100%;border-radius:4px;}
+        .bluebar span{display:block; height:6px; background:#09f; width:100%;border-radius:4px; position:absolute; right:0}
+        .redbar p{line-height:20px; color:red;}
+        .bluebar p{line-height:20px; color:#09f; text-align:right; margin-top:6px}
     </style>
 </head>
 <body>
-<img src="https://byszqq-1310478750.cos.ap-nanjing.myqcloud.com/ehy1C0713131421519066.jpg?imageMogr2/format/avif">
+<div class="vote">
+    <div class="votetitle">您对脚本之家提供的文章的看法？</div>
+    <div class="votetxt">非常实用<span>完全看不懂</span></div>
+    <div class="red" id="red">
+        <div class="redhand"></div>
+        <div class="redbar" id="red_bar">
+            <span></span>
+            <p id="red_num"></p>
+        </div>
+    </div>
+    <div class="blue" id="blue">
+        <div class="bluehand"></div>
+        <div class="bluebar" id="blue_bar">
+            <span></span>
+            <p id="blue_num"></p>
+        </div>
+    </div>
+</div>
 </body>
 </html>

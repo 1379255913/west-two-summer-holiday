@@ -19,17 +19,19 @@ export default [
         method: 'get',
         response: option => {
             let permissions = []
-            if (option.query.account == 'admin') {
+            if (option.query.role === 2) {
                 permissions = [
                     'permission.browse',
-                    'permission.create',
                     'permission.edit',
                     'permission.remove'
                 ]
-            } else if (option.query.account == 'test') {
+            } else if (option.query.role === 1) {
                 permissions = [
                     'permission.browse'
                 ]
+            }
+            if (option.query.forbid<new Date().getTime()/1000){
+                permissions.push('permission.create')
             }
             return {
                 code: 200,

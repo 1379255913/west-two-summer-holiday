@@ -23,13 +23,13 @@ export default function timeAgo(dateTimeStamp) {
     let monthC = diffValue / month;
     if (monthC >= 1 && monthC <= 3) {
         result = " " + parseInt(monthC) + "月前"
-    } else if (weekC >= 1 && weekC <= 3) {
+    } else if (weekC >= 1 && weekC < 4) {
         result = " " + parseInt(weekC) + "周前"
-    } else if (dayC >= 1 && dayC <= 6) {
+    } else if (dayC >= 1 && dayC <7) {
         result = " " + parseInt(dayC) + "天前"
-    } else if (hourC >= 1 && hourC <= 23) {
+    } else if (hourC >= 1 && hourC <24) {
         result = " " + parseInt(hourC) + "小时前"
-    } else if (minC >= 1 && minC <= 59) {
+    } else if (minC >= 1 && minC < 60) {
         result = " " + parseInt(minC) + "分钟前"
     } else if (diffValue >= 0 && diffValue <= minute) {
         result = "刚刚"

@@ -7,7 +7,7 @@
                     </span>
             <ul style="padding: 0">
                 <li class="slider-text" v-for="(item,index) in hotRecommend" :key="item._id">
-                    <div class="route-push" @click="pushRouter(item._id,item.type)">{{ item.title.replace('\n','') }}</div>
+                    <router-link class="route-push" :to="{ name: getRouter(item.type), params: { id: item._id, type: articleType }}">{{ item.title.replace('\n','') }}</router-link>
                 </li>
             </ul>
             <span class="title-left"></span>
@@ -15,8 +15,8 @@
                         为你推荐
                     </span>
             <ul style="padding: 0">
-                <li class="slider-text" v-for="(item,index) in aiRecommend" :key="item._id">
-                    <div class="route-push" @click="pushRouter(item._id,item.type)">{{ item.title.replace('\n','') }}</div>
+                <li class="slider-text" v-for="(item,index) in aiRecommend" :key="item.id">
+                    <router-link class="route-push" :to="{ name: getRouter(item.type), params: { id: item.id, type: articleType }}">{{ item.title.replace('\n','') }}</router-link>
                 </li>
             </ul>
         </div>
@@ -25,7 +25,7 @@
 
 <script setup>
 import { ref,onMounted } from 'vue'
-import {getRecommendArticle} from "@/apiArray/article"
+import {getRecommendArticle,getRecommendArticleAI} from "@/apiArray/article"
 import { useRoute,useRouter } from 'vue-router'
 import  getRouter  from '@/util/router'
 //获取文章推荐
@@ -37,17 +37,17 @@ onMounted(()=>{
     getRecommendArticle('lc',articleType).then(res=>{
         hotRecommend.value = res
     })
-    getRecommendArticle('ai',oid).then(res=>{
+    getRecommendArticleAI(oid).then(res=>{
         aiRecommend.value = res
     })
 })
 //文章跳转
-const router = useRouter()
-// const routerName = useRoute().name
-const pushRouter = (id,type)=>{
-    console.log(getRouter(type))
-    router.push({ name: getRouter(type), params: { id: id, type: articleType }})
-}
+// const router = useRouter()
+// // const routerName = useRoute().name
+// const pushRouter = (id,type)=>{
+//     console.log(getRouter(type))
+//     router.push({ name: getRouter(type), params: { id: id, type: articleType }})
+// }
 </script>
 
 <style lang="scss" scoped>
@@ -79,6 +79,8 @@ const pushRouter = (id,type)=>{
 }
 .route-push{
     cursor: pointer;
+    color: black;
+    text-decoration: none;
 }
 .route-push:hover{
     color: #53cac3;

@@ -8,7 +8,7 @@
                     </div>
                     <div class="card-panel-description">
                         <div class="card-panel-text">职位数</div>
-                        <count-up class="card-panel-num" :end-val="38829"></count-up>
+                        <count-up class="card-panel-num" :end-val="333076"></count-up>
                     </div>
                 </div>
             </el-col>

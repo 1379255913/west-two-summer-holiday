@@ -22,6 +22,11 @@ function userCommand(command) {
                 name: 'personalSetting'
             })
             break
+        case 'myMessage':
+            router.push({
+                name: 'myMessage'
+            })
+            break
         case 'myCollect':
             router.push({
                 name: 'myCollect'
@@ -82,6 +87,7 @@ function userCommand(command) {
                     <el-dropdown-item v-if="settingsStore.dashboard.enable" command="dashboard">控制台</el-dropdown-item>
                     <el-dropdown-item command="setting">个人设置</el-dropdown-item>
                     <el-dropdown-item divided command="myCollect">我的收藏</el-dropdown-item>
+                    <el-dropdown-item divided command="myMessage">我的消息</el-dropdown-item>
                     <el-dropdown-item divided command="logout">退出登录</el-dropdown-item>
                 </el-dropdown-menu>
             </template>

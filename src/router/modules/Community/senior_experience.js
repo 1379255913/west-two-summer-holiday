@@ -42,5 +42,15 @@ export default {
                 activeMenu: '/senior_experience'
             }
         },
+        {
+            path: 'senior_experience_vote',
+            name: 'senior_experience_vote',
+            component: () => import('@/views/Community/vote/index.vue'),
+            meta: {
+                title: '发起投票',
+                sidebar: false,
+                activeMenu: '/senior_experience_vote'
+            }
+        },
     ]
 }

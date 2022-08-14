@@ -6,14 +6,13 @@
                 class="el-menu-demo"
                 mode="horizontal"
             >
-                <el-menu-item class="menu-item" index="1">默 认</el-menu-item>
-                <el-menu-item class="menu-item" index="2">最 新</el-menu-item>
-                <el-menu-item class="menu-item" index="3">最 热</el-menu-item>
-                <el-menu-item class="menu-item" index="4">精 华</el-menu-item>
+                <el-menu-item class="menu-item" index="question" @click="activeIndex='question'">问 答</el-menu-item>
+                <el-menu-item class="menu-item" index="vote" @click="activeIndex='vote'">投 票</el-menu-item>
                 <el-input
                     v-model="searchInput"
                     class="input-with-select"
                     @keyup.enter="searchInform"
+                    v-show="activeIndex==='question'"
                 >
                     <template #prepend>
                         <el-button @click="searchInform">
@@ -31,9 +30,10 @@
                         </el-select>
                     </template>
                 </el-input>
-                <el-button style="height: 32px;margin-left: 20px;margin-right: 0;" type="primary" @click="sendQuestion">发帖</el-button>
+                <el-button style="height: 32px;margin-left: 20px;margin-right: 0;" type="primary" @click="sendQuestion" v-show="activeIndex==='question'">提问</el-button>
+                <el-button style="height: 32px;margin-left: auto;margin-right: 0;" type="primary" @click="sendVote" v-show="activeIndex==='vote'">投票</el-button>
             </el-menu>
-            <ul class="main" v-infinite-scroll="loadMoreQuestion" :infinite-scroll-disabled="disabled">
+            <ul class="main" v-infinite-scroll="loadMoreQuestion" :infinite-scroll-disabled="disabled" v-if="activeIndex==='question'">
                 <el-skeleton style="width: 100%;" animated v-for="t in 5" :loading="loading">
                     <template #template>
                         <li class="main-item">
@@ -60,20 +60,36 @@
                     <div class="item-main">
                         <div class="item-header">
                             <div class="item-header-left">
+                                <router-link :to="{ name: 'personalInfo_index', params: { id: item.user_id }}" style="display: flex;align-items: center;">
                                 <el-avatar :size="20" class="comment-image" :src="item.avatar" />
                                 <span>{{ item.username }}</span>
+                                </router-link>
                             </div>
                             <div class="item-header-right">
                                 {{ timeAgo(item.send_time) }}
                             </div>
                         </div>
-                        <div class="item-title" @click="getDetail(item.question_id)">
-                            {{ item.question_title }}
+                        <div class="item-title">
+                            <div class="item-title-detail" @click="getDetail(item.question_id)">{{ item.question_title }}</div>
+                            <div v-auth="'permission.remove'">
+                                <el-popconfirm title="你确定要删除吗?" @confirm="deleteQuestionAdmin(item.question_id)">
+                                    <template #reference>
+                                        <el-button type="danger" size="small">
+                                            删除<el-icon class="el-icon--right"><svg-icon name="ep:delete"/></el-icon>
+                                        </el-button>
+                                    </template>
+                                </el-popconfirm>
+                            </div>
                         </div>
                         <div class="item-content">
                             {{ item.question_content.replace(/<\/?.+?>/g,"").replace(/ /g,"") }}
                         </div>
                     </div>
+                </li>
+            </ul>
+            <ul class="main" v-if="activeIndex==='vote'">
+                <li class="main-item" v-for="(item,index) in 20">
+                    <div>123</div>
                 </li>
             </ul>
         </page-main>
@@ -87,10 +103,12 @@
 import { ref,reactive,toRefs,onMounted,computed } from 'vue'
 import Slider from './slider.vue'
 import { useRouter } from "vue-router";
-import { getQuestionList } from '@/apiArray/community'
+import { getQuestionList,getVoteList,putVote } from '@/apiArray/community'
 import timeAgo from "@/util/timeAgo";
+import { deleteQuestion } from '@/apiArray/admin'
+import {ElMessage} from "element-plus";
 //菜单
-const activeIndex = ref('1')
+const activeIndex = ref('question')
 //搜索
 const searchSelect = ref('title')
 const searchInput = ref('')
@@ -144,9 +162,37 @@ const loading = ref(true)
 const getDetail = (question_id)=>{
     router.push({ name: 'senior_experience_detail', params: { id: question_id }})
 }
+//删除回答
+const deleteQuestionAdmin = (question_id)=>{
+    deleteQuestion(question_id).then(res=>{
+        for (let i = 0; i <state.articleArray.length; i++) {
+            console.log(state.articleArray[i].question_id)
+            if (state.articleArray[i].question_id===question_id){
+                state.articleArray.splice(i,1)
+            }
+        }
+        ElMessage.success('删除成功')
+    })
+}
+//发起投票
+const sendVote = ()=>{
+    router.push({ name: 'senior_experience_vote'})
+}
+//获取投票数据
+const getVoteData = ()=>{
+
+}
+//进行投票
+const submitVote = ()=>{
+    putVote
+}
 </script>
 
 <style lang="scss" scoped>
+a{
+    color: black;
+    text-decoration: none;
+}
 li, ul{
     list-style: none;
     width: 100%;
@@ -172,13 +218,11 @@ li, ul{
     font-size: 16px;
     font-weight: 700;
 }
-.input-with-select{
-    width: 300px;
-}
 .el-menu-demo{
     align-items: center;
 }
 .input-with-select{
+    width: 300px;
     height: 32px;
     margin-left: auto;
     margin-right: 0;
@@ -201,10 +245,16 @@ li, ul{
     }
 }
 .item-title{
-    cursor:pointer;
-    font-size: 18px;
-    font-weight: 600;
-    margin: 10px 0 0 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    .item-title-detail{
+        cursor:pointer;
+        font-size: 18px;
+        font-weight: 600;
+        margin: 10px 0 0 0;
+    }
 }
 .item-content{
     line-height: 1.5;

@@ -7,8 +7,10 @@
                         {{ state.question_title }}
                     </div>
                     <div class="question-user">
+                        <router-link :to="{ name: 'personalInfo_index', params: { id: state.user_id }}" style="display: flex;align-items: center;">
                         <el-avatar :size="25" class="question-img" :src="state.avatar"></el-avatar>
                         <span style="padding: 0 0 0 10px">{{ state.username }}</span>
+                        </router-link>
                         <span style="padding: 0 0 0 10px">
                             <el-tag v-for="item in state.tags" size="small" :effect="'plain'" style="margin: 0 5px 0 0">
                                 {{ item }}
@@ -53,7 +55,7 @@
                 <div class="answer">
                     <div class="list-header">
                         <div class="header-left">
-                            {{ state.answer_ids.length+pageList.my_answer + '个回答' }}
+                            {{ state.answer_ids.length+pageList.my_answer-deleteNumber + '个回答' }}
                         </div>
                         <div class="header-right">
                             <el-select v-model="sortWay" placeholder="Select" style="width: 120px">
@@ -68,10 +70,14 @@
                                 <div class="content-card">
                                     <div class="card-header">
                                         <div class="avatar-user-info">
+                                            <router-link :to="{ name: 'personalInfo_index', params: { id: item.user.user_id }}">
                                             <el-avatar :size="40" class="question-img" :src="item.user.avatar"></el-avatar>
+                                            </router-link>
                                             <div class="user-message">
                                                 <div class="user-title">
+                                                    <router-link :to="{ name: 'personalInfo_index', params: { id: item.user.user_id }}">
                                                     {{ item.user.username }}
+                                                    </router-link>
                                                 </div>
                                                 <div class="user-tags">
                                                     <el-tag v-for="tag in item.user.tags" size="small" :effect="'plain'" style="margin: 0 5px 0 0">
@@ -84,7 +90,16 @@
                                     <div class="card-main" v-html="item.answer_content">
                                     </div>
                                     <div class="card-time">
-                                        {{ timeAgo(item.send_time) }}
+                                        <span>{{ timeAgo(item.send_time) }}</span>
+                                        <div v-auth="'permission.remove'">
+                                            <el-popconfirm title="你确定要删除吗?" @confirm="deleteAnswerAdmin(item.answer_id)">
+                                                <template #reference>
+                                                    <el-button type="danger" size="small">
+                                                        删除<el-icon class="el-icon--right"><svg-icon name="ep:delete" /></el-icon>
+                                                    </el-button>
+                                                </template>
+                                            </el-popconfirm>
+                                        </div>
                                     </div>
                                 </div>
                             </li>
@@ -93,7 +108,6 @@
                 </div>
             </page-main>
         </div>
-
         <page-main style="width: 25%">
             <slider></slider>
         </page-main>
@@ -105,8 +119,10 @@
 import { ref,toRefs,reactive,onMounted,computed } from 'vue'
 import Slider from './slider.vue'
 import { getFirstQuestion,postAnswer,getAnswer } from "@/apiArray/community";
+import { deleteAnswer } from '@/apiArray/admin'
 import {useRouter, useRoute} from 'vue-router'
 import timeAgo from "@/util/timeAgo";
+import { ElMessage } from 'element-plus'
 const sortWay = ref('1')
 //获取数据
 const oid = useRoute().params.id
@@ -117,7 +133,8 @@ const state = reactive({
     question_title: '',
     tags: [],
     answer_ids: [],
-    page_number: 5
+    page_number: 5,
+    user_id: '1'
 })
 const pageList = reactive({
     current_page: 1,
@@ -147,6 +164,7 @@ onMounted(()=>{
         state.question_title = res.question_title
         state.tags = res.tags || []
         state.answer_ids = res.answer_ids || []
+        state.user_id = res.user_id
         loading.value = true
         loadAnswer()
     })
@@ -179,9 +197,33 @@ const submitAnswer = ()=>{
         answerForm.isEdit =false
     })
 }
+//删除回答
+const deleteNumber = ref(0)
+const deleteAnswerAdmin = (ans)=>{
+    let data = {
+        question_id: oid,
+        answer_id: ans,
+    }
+    deleteAnswer(data).then(res=>{
+        for (let i = 0; i <answerList.value.length; i++) {
+            if (answerList.value[i].answer_id===ans){
+                answerList.value.splice(i,1)
+            }
+        }
+        deleteNumber.value+=1
+        ElMessage.success('删除成功')
+    })
+
+}
+//获取投票
+
 </script>
 
 <style lang="scss" scoped>
+a{
+    color: black;
+    text-decoration: none;
+}
 .question-title{
     font-size: 24px;
     font-weight: 600;
@@ -226,7 +268,10 @@ const submitAnswer = ()=>{
     }
 }
 .card-time{
+    display: flex;
     color: #666666;
     font-size: 14px;
+    flex-direction: row;
+    justify-content: space-between;
 }
 </style>

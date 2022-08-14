@@ -99,3 +99,17 @@ export function uploadInform(data){
         })
     })
 }
+//获取用户信息
+export function getUserInfo(user_id){
+    return new Promise((resolve, reject) => {
+        api.get('user/', {
+            params: {
+                user_id: user_id
+            }
+        }).then(res => {
+            resolve(res.data.data)
+        }).catch(error => {
+            reject(error)
+        })
+    })
+}

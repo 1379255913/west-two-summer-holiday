@@ -116,6 +116,19 @@ export function getRecommendArticle(recommend,type){
         })
     })
 }
+export function getRecommendArticleAI(article_id){
+    return new Promise((resolve, reject) => {
+        api.get('ai/recommend/',{
+            params:{
+                article_id:article_id
+            }
+        }).then(res => {
+            resolve(res.data.data)
+        }).catch(error => {
+            reject(error)
+        })
+    })
+}
 //获取收藏的文章
 export function getFavoriteArticle(page){
     return new Promise((resolve, reject) => {

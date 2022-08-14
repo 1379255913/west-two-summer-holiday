@@ -17,6 +17,7 @@ import 'tinymce/plugins/table'
 import 'tinymce/plugins/wordcount'
 import 'tinymce/plugins/code'
 import 'tinymce/plugins/searchreplace'
+import { tinymceUpload } from "@/apiArray/community"
 
 import useSettingsStore from '@/store/modules/settings'
 
@@ -59,10 +60,17 @@ const defaultSetting = ref({
         '%Y-%m-%d',
         '%H:%M:%S'
     ],
-    images_upload_handler: (blobInfo, success) => {
-        const img = 'data:image/jpeg;base64,' + blobInfo.base64()
-        success(img)
-    }
+    images_upload_handler: (blobInfo, progress) =>
+        new Promise((resolve, reject) =>{
+            console.log(blobInfo.blob())
+            tinymceUpload(blobInfo.blob()).then(res=>{
+                // 编辑器的上传图片内容被处理为<img src="success方法里面的参数" />
+                resolve(res.url)
+            }).catch((e)=> {
+                reject(e)
+            })
+            // 调接口，上传图片
+        })
 })
 
 const myValue = ref(props.modelValue)

@@ -133,7 +133,7 @@ const rollbackInform = ()=>{
 <!--                                    <svg-icon  name="plus" />-->
 <!--                                </el-icon>-->
 <!--                            </el-upload>-->
-                            <image-upload v-model:url="form.headimg" action="http://81.70.180.118:5000/api/v1/user/" name="image" :autoUpload="true" notip class="headimg-upload" @on-success="handleSuccess" />
+                            <image-upload v-model:url="form.headimg" action="http://81.70.180.118/api/v1/user/" name="image" :autoUpload="true" notip class="headimg-upload" @on-success="handleSuccess" />
                         </el-col>
                     </el-row>
                 </el-tab-pane>

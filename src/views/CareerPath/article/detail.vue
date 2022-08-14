@@ -39,10 +39,10 @@
                     发表评论
                 </div>
                 <div class="comment-text">
-                    <el-avatar :size="50" class="comment-image" src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" />
-                    <textarea class="comment-textarea" placeholder="发表神妙评论" v-model="comments"></textarea>
+                    <el-avatar :size="50" class="comment-image" :src="userStore.avatar" />
+                    <textarea class="comment-textarea" :placeholder="judgePlaceholder" :style="judgeStyle" v-model="comments" :disabled="userStore.isForbid"></textarea>
                 </div>
-                <el-button class="comment-button" style="width: 60px" type="primary" plain @click="postComments('father')" :disabled="commentLoading||!comments">
+                <el-button class="comment-button" style="width: 60px" type="primary" plain @click="postComments('father')" :disabled="commentLoading||!comments||userStore.isForbid">
                     <span v-show="!commentLoading">发布</span>
                     <span v-show="commentLoading">
                             <el-icon class="is-loading">
@@ -56,11 +56,15 @@
                 <div class="comment-detail">
                     <div class="comment-detail-list" v-for="(item,index) in comment" :key="index">
                         <div class="list-left">
+                            <router-link :to="{ name: 'personalInfo_index', params: { id: item.user_id }}">
                             <el-avatar :size="40" class="comment-image" :src="item.avatar" />
+                            </router-link>
                         </div>
                         <div class="list-right">
                             <div class="list-title">
+                                <router-link :to="{ name: 'personalInfo_index', params: { id: item.user_id }}">
                                {{ item.username }}
+                                </router-link>
                             </div>
                             <div class="list-text">
                                 {{ item.comment }}
@@ -76,11 +80,15 @@
                             </div>
                             <div class="comment-detail-list" style="margin: 0" v-for="(subitem,subIndex) in item.subcomment" :key="subIndex">
                                 <div class="list-left">
+                                    <router-link :to="{ name: 'personalInfo_index', params: { id: subitem.user_id }}">
                                     <el-avatar :size="40" class="comment-image" :src="subitem.avatar" />
+                                    </router-link>
                                 </div>
                                 <div class="list-right" style="padding: 0 0 0 20px">
                                     <div class="list-title">
+                                        <router-link :to="{ name: 'personalInfo_index', params: { id: subitem.user_id }}">
                                         {{ subitem.username }}
+                                        </router-link>
                                     </div>
                                     <div class="list-text">
                                         {{ subitem.subcomment }}
@@ -110,15 +118,15 @@
             <el-form :model="form">
                 <el-form-item>
                     <div class="comment-text" style="width: 100%">
-                        <el-avatar :size="50" class="comment-image" src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" />
-                        <textarea class="comment-textarea" placeholder="发表神妙评论" v-model="form.comment"></textarea>
+                        <el-avatar :size="50" class="comment-image" :src="userStore.avatar" />
+                        <textarea class="comment-textarea" :placeholder="judgePlaceholder" :style="judgeStyle" v-model="form.comment" :disabled="userStore.isForbid"></textarea>
                     </div>
                 </el-form-item>
             </el-form>
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="cancel">取消</el-button>
-                    <el-button type="primary" style="width: 64px;" @click="commit" :disabled="commentLoading||!form.comment" >
+                    <el-button type="primary" style="width: 64px;" @click="commit" :disabled="commentLoading||!form.comment||userStore.isForbid" >
                         <span v-show="!commentLoading">发布</span>
                         <span v-show="commentLoading">
                             <el-icon class="is-loading">
@@ -138,10 +146,11 @@
 import Like from '@/components/Like/index.vue'
 import Favorite from '@/components/Favorite/index.vue'
 import Recommend from './recommend.vue'
-import { onMounted,reactive,toRefs,ref } from 'vue'
+import { onMounted,reactive,toRefs,ref,computed } from 'vue'
 import {getArticleDetail,putLikeOrFavorite,getLikeOrFavorite,postComment} from "@/apiArray/article"
 import {useRouter, useRoute} from 'vue-router'
 import timeAgo from "@/util/timeAgo";
+import useUserStore from "@/store/modules/user";
 //获取文章信息
 const state = reactive({
     title: '',
@@ -245,9 +254,17 @@ const commit = ()=>{
     commentLoading.value = true
     postComments('son')
 }
+//是否禁言
+const userStore = useUserStore()
+const judgePlaceholder = computed(()=>userStore.isForbid?'你已被禁言!':'发表神妙评论')
+const judgeStyle = computed(()=>userStore.isForbid?{ 'cursor':'not-allowed' }:{ 'cursor':'text' })
 </script>
 
 <style scoped lang="scss">
+a{
+    color: black;
+    text-decoration: none;
+}
 ul, li, ol{
     list-style: none !important;
 }

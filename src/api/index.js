@@ -35,7 +35,8 @@ api.interceptors.request.use(
             request.headers['Authorization'] = userStore.token
         }
         // 是否将 POST 请求参数进行字符串化处理
-        if (request.method === 'post'||request.method === 'put') {
+        if (request.method === 'post'||request.method === 'put'||request.method === 'delete') {
+            console.log(request.data)
             if (request.data&&!(request.data instanceof FormData)) {
                 request.data=qs.stringify(request.data)
             }
@@ -58,8 +59,10 @@ api.interceptors.response.use(
          */
 
         if (response.data.code === 200) {
-            if (!userStore.token) {
-
+            if (response.headers.authorization && response.headers.authorization !== 'refresh' && userStore.token!==response.headers.authorization) {
+                console.log(response.headers['authorization'])
+                userStore.token = response.headers['authorization']
+                localStorage.setItem('token',response.headers['authorization'])
             }
             // 请求成功并且没有报错
             return Promise.resolve(response)

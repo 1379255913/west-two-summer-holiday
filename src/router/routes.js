@@ -100,6 +100,46 @@ let systemRoutes = [
         ]
     },
     {
+        path: '/my_message',
+        component: () => import('@/layout/index.vue'),
+        name: 'myMessage',
+        redirect: '/my_message',
+        meta: {
+            title: '我的消息',
+            breadcrumb: false
+        },
+        children: [
+            {
+                path: '',
+                name: 'myMessage_index',
+                component: () => import('@/views/Chat/index.vue'),
+                meta: {
+                    title: '我的消息',
+                }
+            },
+        ]
+    },
+    {
+        path: '/personal_info',
+        component: () => import('@/layout/index.vue'),
+        name: 'personalInfo',
+        redirect: '/personal_info',
+        meta: {
+            title: '个人信息',
+            breadcrumb: false
+        },
+        children: [
+            {
+                path: ':id',
+                name: 'personalInfo_index',
+                component: () => import('@/views/personal/info.vue'),
+                meta: {
+                    title: '个人信息',
+                }
+            },
+        ]
+    },
+    {
         path: '/reload',
         component: () => import('@/layout/index.vue'),
         meta: {

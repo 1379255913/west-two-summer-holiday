@@ -13,7 +13,7 @@
 
 <script setup>
 import jobForm from "./jobRecommendForm.vue";
-import jobHeader from './header.vue'
+import jobHeader from '../header.vue'
 </script>
 
 <style lang="scss" scoped>
