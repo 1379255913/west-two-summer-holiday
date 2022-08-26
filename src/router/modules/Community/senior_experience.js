@@ -6,7 +6,7 @@ export default {
     name: 'senior_experience',
     redirect: '/senior_experience',
     meta: {
-        title: '前辈经验',
+        title: '社区',
         icon: 'experience',
         detail: 'senior_experience_detail',
     },
@@ -16,7 +16,7 @@ export default {
             name: 'senior_experience_index',
             component: () => import('@/views/Community/index.vue'),
             meta: {
-                title: '前辈经验',
+                title: '社区',
                 breadcrumb: false,
                 sidebar: false,
                 activeMenu: '/senior_experience'

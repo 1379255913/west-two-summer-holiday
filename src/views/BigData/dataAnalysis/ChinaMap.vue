@@ -11,6 +11,7 @@ echarts.registerMap('china', chinaJson)
 const myRef = ref(null)
 onMounted(() => {
     getJobArea().then(res=>{
+        console.log(res)
         let data = []
         let ans =0
         res.forEach(res2=>{
@@ -21,7 +22,6 @@ onMounted(() => {
                 value: res2[1]
             })
         })
-        console.log(ans)
         renderChart(data) // 生命周期挂载函数渲染图表
     })
 
@@ -29,6 +29,12 @@ onMounted(() => {
 const renderChart = (data) => {
     const myChart = echarts.init(myRef.value)
     myChart.setOption({
+        title: {
+            text: '各省招聘数据对比',
+            textStyle:{
+                color : '#e71616'
+            }
+        },
         backgroundColor: '#142452',
         tooltip: {
             trigger: 'item',
@@ -43,7 +49,7 @@ const renderChart = (data) => {
             showLabel: true,
             seriesIndex: [0],
             min: 0,
-            max: 2000,
+            max: 4000,
             calculable: true, //开启游标
             left: 50,
             bottom: 30,
@@ -104,7 +110,7 @@ const renderChart = (data) => {
 
 <style scoped>
 .canvars{
-    width: 400px;
-    height: 400px;
+    width: 800px;
+    height: 600px;
 }
 </style>

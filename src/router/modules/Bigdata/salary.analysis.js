@@ -5,16 +5,16 @@ export default {
     component: Layout,
     name: 'salary_analysis',
     meta: {
-        title: '薪水分析',
+        title: '数据对比',
         icon: 'dotchart'
     },
     children: [
         {
             path: '',
             name: 'salary_analysis_index',
-            component: () => import('@/views/BigData/test.vue'),
+            component: () => import('@/views/BigData/dataComparison/index.vue'),
             meta: {
-                title: '薪水分析',
+                title: '数据对比',
                 breadcrumb: false,
                 sidebar: false,
                 activeMenu: '/salary_analysis'

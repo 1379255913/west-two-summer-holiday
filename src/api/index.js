@@ -19,7 +19,7 @@ const toLogin = () => {
 
 const api = axios.create({
     baseURL: import.meta.env.DEV && import.meta.env.VITE_OPEN_PROXY === 'true' ? '/proxy/' : import.meta.env.VITE_APP_API_BASEURL,
-    timeout: 10000,
+    timeout: 15000,
     responseType: 'json',
     headers: { 'content-type': 'application/x-www-form-urlencoded' },
 })
@@ -60,7 +60,6 @@ api.interceptors.response.use(
 
         if (response.data.code === 200) {
             if (response.headers.authorization && response.headers.authorization !== 'refresh' && userStore.token!==response.headers.authorization) {
-                console.log(response.headers['authorization'])
                 userStore.token = response.headers['authorization']
                 localStorage.setItem('token',response.headers['authorization'])
             }

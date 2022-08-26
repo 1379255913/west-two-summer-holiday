@@ -10,7 +10,7 @@
 <script setup name="PersonalSetting">
 import useUserStore from "@/store/modules/user";
 import { nextTick,ref } from 'vue'
-import { uploadInform } from "@/apiArray/user";
+import {uploadAvatar, uploadInform} from "@/apiArray/user";
 import { ElMessage } from 'element-plus'
 const router = useRouter()
 const userStore = useUserStore()
@@ -76,6 +76,34 @@ const rollbackInform = ()=>{
     userStore.tags= OldForm.tags?JSON.parse(JSON.stringify(OldForm.tags)):[]
     form.value.tags = userStore.tags
 }
+//实名认证
+const dialogFormVisible = ref(false)
+const isAuth = ref(false)
+const authLoading = ref(false)
+import { uploadIDCard } from "@/apiArray/ai"
+const uploadAction = (option) => {
+    console.log(option)
+    authLoading.value = true
+    let param = new FormData();
+    param.append('file', option.file,);
+    uploadIDCard(param).then((res) => {
+        ElMessage.success('实名认证成功！')
+        authLoading.value = false
+        isAuth.value = true
+        dialogFormVisible.value = false
+        console.log(res)
+    }).catch(res=>{
+        authLoading.value = false
+    })
+}
+const beforeClose = (done)=>{
+    console.log(authLoading.value)
+    if (authLoading.value===true){
+        return false
+    } else {
+        return done()
+    }
+}
 </script>
 
 <template>
@@ -137,6 +165,22 @@ const rollbackInform = ()=>{
                         </el-col>
                     </el-row>
                 </el-tab-pane>
+                <el-tab-pane label="实名认证" class="security">
+                    <h2>实名认证</h2>
+                    <div class="setting-list">
+                        <div class="item">
+                            <div class="authentication">
+                                <img class="authentication-img" src="https://p3.itc.cn/images01/20220429/a53d6bd3d7a54cfda14f2d6853fc8fa6.png">
+                                <el-button type="primary" @click="dialogFormVisible=true">上传身份证</el-button>
+                                <el-button type="danger">重置</el-button>
+                                <el-tag type="success" size="large" class="authentication-tag" v-if="isAuth">已完成实名认证</el-tag>
+                                <el-tag type="info" size="large" class="authentication-tag" v-if="!isAuth">未完成实名认证</el-tag>
+                            </div>
+                            <div class="judge">
+                            </div>
+                        </div>
+                    </div>
+                </el-tab-pane>
                 <el-tab-pane label="安全设置" class="security">
                     <h2>安全设置</h2>
                     <div class="setting-list">
@@ -171,6 +215,29 @@ const rollbackInform = ()=>{
                 </el-tab-pane>
             </el-tabs>
         </page-main>
+        <el-dialog v-model="dialogFormVisible" title="请传入清晰明亮的身份证照片" :before-close="beforeClose">
+            <el-upload
+                class="upload-demo"
+                drag
+                action="http://81.70.180.118/api/v1/ai/user/id_photo"
+                :auto-upload = "true"
+                :http-request = "uploadAction"
+                multiple
+                v-loading="authLoading"
+            >
+                <el-icon class="el-icon--upload">
+                    <svg-icon name="ep:upload-filled" />
+                </el-icon>
+                <div class="el-upload__text">
+                    拖动文件到此处 <em>点击上传</em>
+                </div>
+                <template #tip>
+                    <div class="el-upload__tip">
+                        请传入jpg/png格式文件,大小小于1MB
+                    </div>
+                </template>
+            </el-upload>
+        </el-dialog>
     </div>
 </template>
 
@@ -244,4 +311,16 @@ h2 {
         }
     }
 }
+.authentication{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    .authentication-img{
+        width: 200px;
+    }
+    .authentication-tag{
+        margin-left: 10px;
+    }
+}
+
 </style>

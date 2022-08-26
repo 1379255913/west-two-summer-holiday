@@ -6,7 +6,7 @@
             </div>
             <div class="personal-info">
                 <div class="info-button">
-                    <el-button>私聊</el-button>
+                    <el-button :disabled="info.username===userStore.username" @click="personalChat">私聊</el-button>
                     <el-button type="danger" v-auth="'permission.remove'" style="margin-right: 10px" @click="forbidForm.dialogFormVisible=true">禁言</el-button>
                 </div>
                 <div class="personal-title">
@@ -98,11 +98,17 @@
 <script setup>
 import { reactive,onMounted } from 'vue'
 import { getUserInfo } from "@/apiArray/user";
-import { useRoute } from 'vue-router'
+import { useRoute,useRouter } from 'vue-router'
 import { roleJudge,forbidJudge } from "@/util/role";
 import { forbidUser } from "@/apiArray/admin";
+import useUserStore from "@/store/modules/user"
+import useChatStore from "@/store/modules/chat";
 import list from "@/util/shortcuts";
 import { ElMessage } from 'element-plus'
+import { postRoom } from "@/apiArray/chat";
+const userStore = useUserStore()
+const chatStore = useChatStore()
+const router = useRouter()
 const oid = useRoute().params.id
 const info = reactive({
     avatar: '',
@@ -146,6 +152,17 @@ const putForbid = () =>{
         ElMessage.success('禁言成功')
         forbidForm.dialogFormVisible = false
         freshInfo()
+    })
+}
+//私聊
+const personalChat = ()=>{
+    postRoom(info.user_id).then(res=>{
+        console.log(res)
+        chatStore.flashRoom().then(res2=>{
+            router.push({name:'myMessage_index'})
+        })
+    }).catch(res=>{
+        router.push({name:'myMessage_index'})
     })
 }
 </script>

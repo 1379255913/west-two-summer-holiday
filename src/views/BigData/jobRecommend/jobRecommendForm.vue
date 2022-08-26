@@ -37,45 +37,7 @@
         <el-button type="danger" @click="resetForm">复原</el-button>
     </el-form>
     <el-divider/>
-    <ul class="job-list-box">
-        <li v-for="(item,index) in jobList" :key="item.num" class="job-list-item">
-            <el-card shadow="hover" :body-style="{ background:'#fbfbfb' }">
-                <div class="card-main">
-                    <div class="main-left">
-                        <div class="job-name">
-                            {{ item.jobs }}
-                        </div>
-                        <div class="job-education-experience">
-                            <div class="job-education">
-                                {{ item.learn }}
-                            </div>
-                            <div class="job-experience">
-                                {{ item.time }}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="main-right">
-                        <div class="job-salary">
-                            {{ item.salary }}
-                        </div>
-                        <div class="job-city">
-                            {{ item.place }}
-                        </div>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <div>
-                        <span class="footer-title">福利</span>
-                        <el-tag round size="small" v-for="j in formatDatas(item.goodthing)" class="footer-tags">{{ j }}</el-tag>
-                    </div>
-                    <div>
-                        <span class="footer-title">要求</span>
-                        <el-tag round size="small" v-for="j in formatDatas(item.needthing)" class="footer-tags">{{ j }}</el-tag>
-                    </div>
-                </div>
-            </el-card>
-        </li>
-    </ul>
+    <job-list :data="jobLists"></job-list>
 </template>
 
 <script>
@@ -88,9 +50,10 @@ import {
     from 'vue'
 import jobTagsList from '@/util/jobTags'
 import areaTags from '@/util/area2'
-import { jobRecommend } from '@/apiArray/ai'
+import jobList from '../jobList.vue'
+import { jobRecommend2 } from '@/apiArray/ai'
 export default defineComponent({
-    components: {},
+    components: {jobList},
     props: {},
     setup() {
         const state = reactive({
@@ -143,15 +106,15 @@ export default defineComponent({
             }],
             selectTags1 : [],
             selectTags2 : [],
-            jobList: []
+            jobLists: []
         })
         const { proxy } = getCurrentInstance()
         const fixJobs = ()=>{
             let ans = []
             state.selectTags1.forEach(res=>{
-                ans.push(res.join(''))
+                ans.push(res[2])
             })
-            return JSON.stringify(ans)
+            return ans[0]
         }
         const fixCity = ()=>{
             let ans =[]
@@ -162,7 +125,7 @@ export default defineComponent({
                     ans.push(res[res.length-1])
                 }
             })
-            return JSON.stringify(ans)
+            return ans[0]
         }
         const submitForm = () => {
             console.log(state.selectTags1[0].join(''),state.selectTags2)
@@ -176,9 +139,17 @@ export default defineComponent({
                     city: fixCity()
                 }
                 console.log(data)
-                jobRecommend(data).then(res=>{
+                jobRecommend2(data).then(res=>{
                     console.log(res)
-                    state.jobList = res
+                    res.forEach(each=>{
+                        if (each.goodList){
+                            each.goodList = eval(each.goodList)
+                        }
+                        if (each.needList){
+                            each.needList = eval(each.needList)
+                        }
+                    })
+                    state.jobLists = res
                 })
             })
         }

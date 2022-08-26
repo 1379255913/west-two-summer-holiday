@@ -7,7 +7,7 @@
                 mode="horizontal"
             >
                 <el-menu-item class="menu-item" index="question" @click="activeIndex='question'">问 答</el-menu-item>
-                <el-menu-item class="menu-item" index="vote" @click="activeIndex='vote'">投 票</el-menu-item>
+                <el-menu-item class="menu-item" index="vote" @click="InitVoteData">投 票</el-menu-item>
                 <el-input
                     v-model="searchInput"
                     class="input-with-select"
@@ -88,8 +88,15 @@
                 </li>
             </ul>
             <ul class="main" v-if="activeIndex==='vote'">
-                <li class="main-item" v-for="(item,index) in 20">
-                    <div>123</div>
+                <li class="main-item" v-for="(item,index) in VoteArray" :key="item.topic_id">
+                    <div class="vote-detail">
+                        <div style="width: 700px">
+                            <vote v-model="VoteArray[index].options" :title="item.topic_content" v-model:hasVoted="VoteArray[index].choose" :oid="item.topic_id" @vote="submitVote"></vote>
+                        </div>
+                        <div>
+                            <vote-chart :title="item.topic_content" :data="VoteArray[index].options" :hasVoted="VoteArray[index].choose"></vote-chart>
+                        </div>
+                    </div>
                 </li>
             </ul>
         </page-main>
@@ -179,12 +186,34 @@ const sendVote = ()=>{
     router.push({ name: 'senior_experience_vote'})
 }
 //获取投票数据
-const getVoteData = ()=>{
-
+const VoteArray = ref([])
+const InitVoteData = ()=>{
+    activeIndex.value ='vote'
+    getVoteList(1).then(res=>{
+        res.votes.forEach(each=>{
+            let ans = []
+            if (!each.choose){ each.choose='' }
+            each.options.forEach(each2=>{
+                if (each2.name){
+                    ans.push(each2)
+                }
+            })
+            each.options = ans
+        })
+        console.log(res.votes)
+        VoteArray.value = res.votes
+    })
 }
 //进行投票
-const submitVote = ()=>{
-    putVote
+const submitVote = (ans,oid)=>{
+    console.log(ans)
+    let data={
+        topic_id:oid,
+        op: (ans+1).toString()
+    }
+    putVote(data).then(res=>{
+
+    })
 }
 </script>
 
@@ -265,5 +294,8 @@ li, ul{
     display:-webkit-box;
     -webkit-line-clamp:2;
     -webkit-box-orient:vertical
+}
+.vote-detail{
+    display: flex;
 }
 </style>

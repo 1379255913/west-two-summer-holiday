@@ -1,7 +1,10 @@
 <template>
     <div>
         <page-main>
-            <china-map></china-map>
+            <div class="box">
+                <china-map></china-map>
+            </div>
+
         </page-main>
     </div>
 </template>
@@ -11,5 +14,10 @@ import ChinaMap from './ChinaMap.vue'
 </script>
 
 <style scoped>
-
+.box{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 </style>

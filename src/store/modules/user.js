@@ -2,7 +2,7 @@ import api from '@/api'
 
 import useRouteStore from './route'
 import useMenuStore from './menu'
-
+import useChatStore from "./chat"
 
 const useUserStore = defineStore(
     // 唯一ID
@@ -17,7 +17,8 @@ const useUserStore = defineStore(
             tags: localStorage.tags?JSON.parse(localStorage.tags):[],
             permissions: localStorage.permissions?JSON.parse(localStorage.permissions):[],
             role: localStorage.role?parseInt(localStorage.role):1,
-            forbid: localStorage.forbid?parseFloat(localStorage.forbid):1760123524
+            forbid: localStorage.forbid?parseFloat(localStorage.forbid):1760123524,
+            user_id: localStorage.user_id || '',
         }),
         getters: {
             isLogin: state => {
@@ -43,6 +44,7 @@ const useUserStore = defineStore(
                         localStorage.setItem('refresh_token', res.headers['refresh-token'])
                         localStorage.setItem('account', res.data.data.username)
                         localStorage.setItem('username', res.data.data.username)
+                        localStorage.setItem('user_id', res.data.data.user_id)
                         localStorage.setItem('token', res.headers['authorization'])
                         localStorage.setItem('failure_time', (Math.ceil(new Date().getTime() / 1000) + 24 * 60 * 60).toString())
                         localStorage.setItem('avatar', res.data.data.avatar)
@@ -51,6 +53,7 @@ const useUserStore = defineStore(
                         localStorage.setItem('forbid',res.data.data.forbid)
                         this.username= res.data.data.username
                         this.account = res.data.data.username
+                        this.user_id = res.data.data.user_id
                         this.token = res.headers['authorization']
                         this.failure_time = (Math.ceil(new Date().getTime() / 1000) + 24 * 60 * 60).toString()
                         this.avatar = res.data.data.avatar
@@ -68,6 +71,7 @@ const useUserStore = defineStore(
                 return new Promise(resolve => {
                     const routeStore = useRouteStore()
                     const menuStore = useMenuStore()
+                    const chatStore = useChatStore()
                     localStorage.removeItem('account')
                     localStorage.removeItem('token')
                     localStorage.removeItem('failure_time')
@@ -78,8 +82,10 @@ const useUserStore = defineStore(
                     localStorage.removeItem('role')
                     localStorage.removeItem('forbid')
                     localStorage.removeItem('permission')
+                    localStorage.removeItem('user_id')
                     this.username= ''
                     this.account = ''
+                    this.user_id = ''
                     this.token = ''
                     this.failure_time = ''
                     this.avatar = ''
@@ -89,6 +95,7 @@ const useUserStore = defineStore(
                     this.permission = []
                     routeStore.removeRoutes()
                     menuStore.setActived(0)
+                    chatStore.clearData()
                     resolve()
                 })
             },

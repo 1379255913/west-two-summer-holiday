@@ -1,44 +1,71 @@
 import api from "@/api";
 import {defineStore} from "pinia";
+import { postRoom,getRoomInfo,getRoomList } from '@/apiArray/chat'
 
 const useChatStore = defineStore(
     // 唯一ID
     'chat',
     {
         state: () => ({
-            ClickUser: '',
-            UserState: '离线',
-            LastMessages: '',
-            MissMessagesNumber: 0,
+            ClickUser: {},
+            UserState: false,
+            MessageList: [],
+            sid: '',
+            OnlineUser: [],
+            ClickRoomMessage: [],
         }),
+        getters: {
+            isClicked: state => {
+                return JSON.stringify(state.ClickUser) !=='{}'
+            },
+            unread: state => {
+                for (let i = 0; i < state.MessageList.length; i++) {
+                    if (state.MessageList[i].to_read>0){
+                        return true
+                    }
+                }
+                return false
+            }
+        },
         actions: {
-            changeClick(user){
-                this.ClickUser = user
-                this.MissMessagesNumber = 0
-            },
-            changeUserState(flag){
-                if (flag === 'true') {this.UserState = '在线'}
-                else {this.UserState = '离线'}
-            },
-            sendMessage(data) {
+            flashRoom(){
                 return new Promise((resolve, reject) => {
-                    // 通过 mock 进行登录
-                    // api.post('login', data, {
-                    // }).then(res => {
-                    //     localStorage.setItem('account', res.data.account)
-                    //     localStorage.setItem('token', res.data.token)
-                    //     localStorage.setItem('failure_time', res.data.failure_time)
-                    //     this.account = res.data.account
-                    //     this.token = res.data.token
-                    //     this.failure_time = res.data.failure_time
-                    //     resolve()
-                    // }).catch(error => {
-                    //     reject(error)
-                    // })
+                    let data={}
+                    return getRoomList().then(res=>{
+                        data = res
+                        // this.OnlineUser = data.online_users
+                        this.sid = data.user_sid
+                        this.MessageList =data.rooms
+                        console.log(data)
+                        return resolve()
+                    })
                 })
             },
-            socketIo(user){
-
+            changeClick(room_id){
+                this.MessageList.forEach(each=>{
+                    if (each.room_id===room_id){
+                        each.to_read = 0
+                        this.ClickUser = each
+                    }
+                })
+            },
+            freshLastInfo(message,room_id){
+                this.MessageList.forEach(each=>{
+                    if (each.room_id===room_id){
+                        each.last_msg = message
+                        if (this.ClickUser.room_id!==room_id){
+                            each.to_read+=1
+                        }
+                    }
+                })
+            },
+            clearData(){
+                this.ClickUser= {}
+                this.UserState= '离线'
+                this.MessageList= []
+                this.sid=''
+                this.OnlineUser=[]
+                this.ClickRoomMessage=[]
             }
         }
     }

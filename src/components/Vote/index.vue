@@ -13,14 +13,14 @@
     <el-progress
         :text-inside="true"
         :stroke-width="32"
-        :percentage="formatData(item.number)"
+        :percentage="formatData(item.count)"
         v-for="(item,index) in myValue"
         :key="index"
         :status = "item.name===myhasVoted?'exception':''"
         class="item-main"
         v-if="myhasVoted"
     >
-        <span class="item-name">{{ item.name+`(${formatData(item.number)}%)` }}</span>
+        <span class="item-name" :style="formatData(item.count)<=10?{color:'black'}:{}">{{ item.name+`(${formatData(item.count)}%)` }}</span>
     </el-progress>
 </template>
 
@@ -48,7 +48,7 @@ const props = defineProps({
 const formatData = (data)=>{
     let total = 0
     myValue.value.forEach(res=>{
-        total+=res.number
+        total+=res.count
     })
     if (flag.value===true){
         return 0
@@ -75,7 +75,7 @@ const voted = (name) =>{
     let ans = 0
     myValue.value.forEach((res,index)=>{
         if (res.name===name){
-            res.number+=1
+            res.count+=1
             ans = index
         }
     })
@@ -90,7 +90,7 @@ const voted = (name) =>{
 }
 .item-main{
     width: 100%;
-    margin: 0 0 5px 0;
+    margin: 0 0 10px 0;
     font-size: 15px;
 }
 .vote-title{

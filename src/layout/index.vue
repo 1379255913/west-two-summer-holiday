@@ -16,6 +16,12 @@ import useKeepAliveStore from '@/store/modules/keepAlive'
 const keepAliveStore = useKeepAliveStore()
 import useMenuStore from '@/store/modules/menu'
 const menuStore = useMenuStore()
+import { onMounted,onUnmounted,inject } from "vue";
+import useChatStore from "@/store/modules/chat";
+import {ElNotification} from "element-plus";
+const chatStore = useChatStore()
+import useUserStore from "@/store/modules/user";
+const userStore = useUserStore()
 
 const showCopyright = computed(() => {
     return typeof routeInfo.meta.copyright !== 'undefined' ? routeInfo.meta.copyright : settingsStore.copyright.enable
@@ -38,7 +44,7 @@ watch(() => routeInfo.path, () => {
         })
     }
 })
-
+const socket = inject("socket")
 onMounted(() => {
     proxy.$hotkeys('f5', e => {
         if (settingsStore.topbar.enablePageReload) {
@@ -46,6 +52,27 @@ onMounted(() => {
             reload()
         }
     })
+    socket.connect()
+    socket.on('get_msg',res=>{
+        console.log(res,'get_msg')
+        if (res.data.reader_id===userStore.user_id){
+            ElNotification({
+                title: res.data.sender.username,
+                message: res.data.message
+            })
+            chatStore.freshLastInfo(res.data.message,res.data.room_id)
+        }
+    })
+    socket.on('sys_msg',res=>{
+        console.log(res,'msg')
+    })
+    socket.emit('update',{ "user_id": userStore.user_id })
+    chatStore.flashRoom()
+})
+onUnmounted(()=>{
+    socket.off('get_msg')
+    socket.off('sys_msg')
+    socket.disconnect()
 })
 provide('reload', reload)
 function reload() {

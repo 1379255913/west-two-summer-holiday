@@ -6,6 +6,8 @@ import useSettingsStore from '@/store/modules/settings'
 const settingsStore = useSettingsStore()
 import useUserStore from '@/store/modules/user'
 const userStore = useUserStore()
+import useChatStore from "@/store/modules/chat";
+const chatStore = useChatStore()
 
 import { useFullscreen } from '@vueuse/core'
 const { isFullscreen, toggle } = useFullscreen()
@@ -87,7 +89,7 @@ function userCommand(command) {
                     <el-dropdown-item v-if="settingsStore.dashboard.enable" command="dashboard">控制台</el-dropdown-item>
                     <el-dropdown-item command="setting">个人设置</el-dropdown-item>
                     <el-dropdown-item divided command="myCollect">我的收藏</el-dropdown-item>
-                    <el-dropdown-item divided command="myMessage">我的消息</el-dropdown-item>
+                    <el-dropdown-item divided command="myMessage">我的消息<el-badge :is-dot="chatStore.unread"/></el-dropdown-item>
                     <el-dropdown-item divided command="logout">退出登录</el-dropdown-item>
                 </el-dropdown-menu>
             </template>
