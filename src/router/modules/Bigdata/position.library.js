@@ -12,7 +12,7 @@ export default {
         {
             path: '',
             name: 'position_library_index',
-            component: () => import('@/views/BigData/test.vue'),
+            component: () => import('@/views/BigData/dataComparison/index.vue'),
             meta: {
                 title: '职位库',
                 breadcrumb: false,
