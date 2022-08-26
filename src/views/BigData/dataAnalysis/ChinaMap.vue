@@ -1,5 +1,5 @@
 <template>
-    <div class="canvars" ref="myRef">222</div>
+    <div class="canvars" ref="myRef"></div>
 </template>
 
 <script setup>
@@ -49,7 +49,7 @@ const renderChart = (data) => {
             showLabel: true,
             seriesIndex: [0],
             min: 0,
-            max: 4000,
+            max: 32000,
             calculable: true, //开启游标
             left: 50,
             bottom: 30,
